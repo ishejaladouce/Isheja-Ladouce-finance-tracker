@@ -1,48 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
-  <body>
-    <a href="#main-content" class="skip-link"> Skip to main content</a>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finance Tracker</title>
+  <link rel="stylesheet" href="./styles/style.css" />
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    <header>
-      <aside class="sidebar">
-        <nav>
-          <ul>
-            <li><a href="#About"> About</a></li>
-            <li><a href="#Dashboard"> Dashboard</a></li>
-            <li><a href="#records"> Records</a></li>
-            <li><a href="#form"> Add/Edit</a></li>
-            <li><a href="#settings"> Settings</a></li>
-          </ul>
-        </nav>
-      </aside>
-    </header>
+  <header>
+    <button class="hamburger" aria-label="Toggle navigation">☰</button>
+    <h1>Finance Tracker</h1>
+  </header>
 
-    <section class="content-area">
-      <section id="about">
+  <div class="main-layout">
+    <aside class="sidebar">
+      <nav>
+        <ul>
+          <li><a href="#dashboard">Dashboard</a></li>
+          <li><a href="#records">Records</a></li>
+          <li><a href="#form-section">Add Record</a></li>
+          <li><a href="#settings-section">Settings</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main id="main-content" class="content-area">
+      <!-- About Section -->
+      <section id="about-section">
         <h2>About</h2>
         <p>
-          This student Finance Tracker was built by
-          <strong>ISHEJA Ladouce</strong> to help manage budgets and track
-          transactions efficiently.
+          This Student Finance Tracker was built by <strong>ISHEJA Ladouce</strong>
+          to manage budgets and track transactions efficiently.
         </p>
         <p>
           Contact:
-          <a href="mailto:l.isheja@alustudent.com">l.isheja@alustudent.com</a>
-          <a
-            href="https://github.com/ishejaladouce"
-            target="_blank"
-            rel="noopener"
-            >Github</a
-          >
+          <a href="mailto:l.isheja@alustudent.com">l.isheja@alustudent.com</a> |
+          <a href="https://github.com/ishejaladouce" target="_blank" rel="noopener">GitHub</a>
         </p>
       </section>
 
-      <section id="dashboard" class="dashboard">
+      <!-- Dashboard Section -->
+      <section id="dashboard">
         <h2>Dashboard</h2>
 
         <div class="dashboard-cards">
@@ -61,78 +61,56 @@
             <p id="cap-status">Within Limit</p>
           </div>
         </div>
-
-        <div
-          class="dashboard-chart"
-          aria-label="Spending trend for last 7 days"
-        >
-          <!-- chart will be added via JS -->
+        <div class="dashboard-chart" aria-label="Spending trend for last 7 days">
+          <!-- JS will populate chart here -->
         </div>
       </section>
 
-      <section id="records" class="records">
+      <!-- Records Section -->
+      <section id="records">
         <h2>Records</h2>
 
         <table class="records-table">
           <thead>
             <tr>
-              <th scope="col">#</th>
-              <th scope="col">Description</th>
-              <th scope="col">Amount</th>
-              <th scope="col">Category</th>
-              <th scope="col">Date</th>
-              <th scope="col">Actions</th>
+              <th>#</th>
+              <th>Description</th>
+              <th>Amount</th>
+              <th>Category</th>
+              <th>Date</th>
+              <th>Actions</th>
             </tr>
           </thead>
 
           <tbody id="records-body">
-            <!-- Rows will dynamically be populated here by Js -->
+            <!-- JS will populate table rows here -->
           </tbody>
         </table>
 
         <div class="records-cards" id="records-cards">
-          <!-- Cards for mobile view will be dynamically generated here by Js -->
+          <!-- JS will populate mobile cards here -->
         </div>
       </section>
 
-      <section id="form" class="form-section">
-        <h2>Add/ Edit Transaction</h2>
-
+      <!-- Add/Edit Form Section -->
+      <section id="form-section" class="form-section">
+        <h2>Add / Edit Transaction</h2>
         <form id="transaction-form" novalidate>
           <div class="form-group">
             <label for="description">Description</label>
-            <input
-              type="text"
-              id="description"
-              name="description"
-              placeholder="Enter description"
-              required
-            />
+            <input type="text" id="description" name="description" placeholder="Enter description" required />
             <small class="error-message" aria-live="polite"></small>
           </div>
 
           <div class="form-group">
             <label for="amount">Amount ($)</label>
-            <input
-              type="number"
-              id="amount"
-              name="amount"
-              placeholder="0.00"
-              step="0.01"
-              required
-            />
+            <input type="number" id="amount" name="amount" placeholder="0.00" step="0.01" required />
             <small class="error-message" aria-live="polite"></small>
           </div>
 
           <div class="form-group">
             <label for="category">Category</label>
-            <input
-              type="text"
-              id="category"
-              name="category"
-              placeholder="Food, Books, etc."
-              required
-            />
+            <input type="text" id="category" name="category" placeholder="Food, Books, etc." required />
             <small class="error-message" aria-live="polite"></small>
           </div>
 
@@ -147,35 +125,20 @@
             <button type="reset">Reset</button>
           </div>
         </form>
-        <section id="settings" class="settings-section">
-          <h2>Settings</h2>
+      </section>
 
-          <div class="form-group">
-            <label for="budget-cap">Budget Cap ($)</label>
-            <input
-              type="number"
-              id="budget-cap"
-              name="budget-cap"
-              placeholder="0.00"
-              step="0.01"
-            />
-            <small class="info-message" aria-live="polite"
-              >Set a maximum spending limit.</small
-            >
-          </div>
-        </section>
-
+      <!-- Settings Section -->
+      <section id="settings-section" class="settings-section">
+        <h2>Settings</h2>
+        <div class="form-group">
+          <label for="budget-cap">Budget Cap ($)</label>
+          <input type="number" id="budget-cap" name="budget-cap" placeholder="0.00" step="0.01" />
+          <small class="info-message" aria-live="polite">Set a maximum spending limit.</small>
+        </div>
         <div class="form-group">
           <label for="unit">Units</label>
-          <input
-            type="text"
-            id="unit"
-            name="unit"
-            placeholder="e.g., minutes, pages"
-          />
-          <small class="info-message" aria-live="polite"
-            >Define units for tracking.</small
-          >
+          <input type="text" id="unit" name="unit" placeholder="e.g., minutes, pages" />
+          <small class="info-message" aria-live="polite">Define units for tracking.</small>
         </div>
 
         <div class="form-group">
@@ -185,9 +148,7 @@
             <option value="EUR">EUR</option>
             <option value="GBP">GBP</option>
           </select>
-          <small class="info-message" aria-live="polite"
-            >Select your default currency.</small
-          >
+          <small class="info-message" aria-live="polite">Select your default currency.</small>
         </div>
 
         <div class="form-actions">
@@ -195,17 +156,18 @@
         </div>
 
       </section>
+    </main>
+  </div>
 
-    </section>
+  <footer>
+    <p>&copy; 2025 Ladouce Isheja | Student Finance Tracker</p>
+    <p>
+      Contact:
+      <a href="mailto:l.isheja@alustudent.com">l.isheja@alustudent.com</a> |
+      <a href="https://github.com/ishejaladouce" target="_blank" rel="noopener">GitHub</a>
+    </p>
+  </footer>
 
-    <footer>
-  <p>&copy; 2025 Ladouce Isheja | Student Finance Tracker</p>
-  <p>
-    Contact: 
-    <a href="mailto:l.isheja@alustudent.com">l.isheja@alustudent.com</a> | 
-    <a href="https://github.com/ishejaladouce" target="_blank" rel="noopener">GitHub</a>
-  </p>
-</footer>
-
-  </body>
+  <script src="scripts/main.js"></script>
+</body>
 </html>

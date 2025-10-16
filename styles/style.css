@@ -32,19 +32,13 @@ body {
   top: 6px;
 }
 
-/* Header - Fixed at top */
+/* Header - Normal flow, scrolls away */
 header {
   display: flex;
   align-items: center;
   padding: 1rem 1.5rem;
   background: #1e293b;
   color: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
   height: 70px;
 }
 
@@ -71,25 +65,24 @@ header h1 {
   outline: 2px solid #f59e0b;
 }
 
-/* Main layout - accounts for fixed header */
+/* Main layout */
 .main-layout {
   display: flex;
-  min-height: calc(100vh - 70px);
-  margin-top: 70px;
+  min-height: 100vh;
 }
 
-/* Sidebar navigation - fixed below header */
+/* Sidebar navigation - Fixed to top with margin */
 .sidebar {
   width: 260px;
   background: #1e293b;
   padding: 1.5rem 0;
   position: fixed;
-  top: 70px;
+  top: 90px; /* Margin from header */
   left: -280px;
-  height: calc(100vh - 70px);
+  height: calc(100vh - 90px);
   overflow-y: auto;
   transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 999;
+  z-index: 99;
   box-shadow: 2px 0 8px rgba(0,0,0,0.1);
 }
 
@@ -132,9 +125,8 @@ header h1 {
 .content-area {
   flex: 1;
   padding: 2rem;
-  transition: margin-left 0.3s ease;
   max-width: 100%;
-  min-height: calc(100vh - 70px);
+  min-height: 100vh;
 }
 
 .content-section {
@@ -396,7 +388,7 @@ footer a:hover {
 }
 
 .records-cards {
-  display: none; /* Show only on mobile */
+  display: none;
 }
 
 /* Tablet */
@@ -427,7 +419,9 @@ footer a:hover {
   .sidebar {
     position: fixed;
     left: 0;
-    height: calc(100vh - 70px);
+    top: 0;
+    margin-top: 90px; /* 70px header + 20px margin */
+    height: calc(100vh - 90px);
   }
   
   .content-area {
@@ -462,7 +456,7 @@ footer a:hover {
   }
 }
 
-/* Mobile cards (show only on small screens) */
+/* Mobile cards */
 @media (max-width: 767px) {
   .records-table {
     display: none;
@@ -482,13 +476,13 @@ footer a:hover {
   }
 }
 
-/* Focus styles for accessibility */
+/* Focus styles */
 *:focus-visible {
   outline: 2px solid #2563eb;
   outline-offset: 2px;
 }
 
-/* Animation for chart */
+/* Chart */
 .chart-container {
   background: white;
   padding: 1.5rem;

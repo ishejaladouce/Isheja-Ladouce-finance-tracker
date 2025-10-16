@@ -40,30 +40,31 @@ header {
 /* Hamburger Menu - STANDALONE FLOATING BUTTON */
 .menu-toggle {
   position: fixed;
-  top: 1rem;
-  left: 1rem;
+  top: 20px;
+  left: 20px;
   background: #1e293b;
   border: 2px solid #f59e0b;
   color: #f59e0b;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 6px;
-  transition: all 0.2s;
+  padding: 0.75rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   z-index: 1001;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
 .menu-toggle:hover,
 .menu-toggle:focus {
-  background-color: rgba(245, 158, 11, 0.1);
-  outline: 2px solid #f59e0b;
-  transform: scale(1.05);
+  background-color: #f59e0b;
+  color: #1e293b;
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
 }
 
 .menu-toggle:active {
@@ -194,7 +195,7 @@ header {
 /* Status Messages */
 .status-message {
   position: fixed;
-  top: 20px;
+  top: 90px;
   left: 50%;
   transform: translateX(-50%);
   padding: 1rem 1.5rem;

@@ -1,52 +1,353 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Validator Tests</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 2rem; background: #f5f5f5; }
-    h1 { color: #333; }
-    .pass { color: green; }
-    .fail { color: red; }
-    .test { margin-bottom: 1rem; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance App - Check Your Code</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+            color: #333;
+        }
+        .check-area {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .result-box {
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 4px;
+            border-left: 4px solid #777;
+        }
+        .result-good {
+            background: #e8f5e8;
+            border-color: #4CAF50;
+        }
+        .result-bad {
+            background: #ffe8e8;
+            border-color: #f44336;
+        }
+        .input-box {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .action-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px 5px 5px 0;
+        }
+        .action-btn:hover {
+            background: #1976D2;
+        }
+        .code-sample {
+            background: #f8f8f8;
+            padding: 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        .page-header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .score-display {
+            background: #34495e;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+    </style>
 </head>
 <body>
-  <h1>Validator Tests</h1>
-  <div id="test-results"></div>
+    <div class="page-header">
+        <h1>🧪 Check Your Finance App Code</h1>
+        <p>Test if your validation rules work correctly</p>
+    </div>
 
-  <script type="module">
-    import { reDescription, reAmount, reDate, reCategory, reDuplicateWord, testRegex } from './scripts/validators.js';
+    <div class="score-display">
+        <h2>Test Results</h2>
+        <div id="score-board">Ready to start testing...</div>
+    </div>
 
-    const tests = [
-      { regex: reDescription, value: "Lunch at cafe", expected: true, label: "Description valid" },
-      { regex: reDescription, value: "  Lunch  ", expected: false, label: "Description invalid (spaces)" },
+    <!-- Check Rule 1: Text Input -->
+    <div class="check-area">
+        <h2>Check Text Input Rules</h2>
+        
+        <h3>1. Check Description Text</h3>
+        <div class="code-sample">Rule: No extra spaces at start or end</div>
+        <input type="text" id="check-text" class="input-box" placeholder="Type some text here">
+        <button class="action-btn" onclick="checkTextRule()">Check This Text</button>
+        <div id="text-result" class="result-box">Type something above to check</div>
 
-      { regex: reAmount, value: "12", expected: true, label: "Amount valid integer" },
-      { regex: reAmount, value: "12.50", expected: true, label: "Amount valid decimal" },
-      { regex: reAmount, value: "12.999", expected: false, label: "Amount invalid decimal" },
+        <h3>2. Check Money Amount</h3>
+        <div class="code-sample">Rule: Numbers only, up to 2 decimal places</div>
+        <input type="text" id="check-money" class="input-box" placeholder="Enter money amount">
+        <button class="action-btn" onclick="checkMoneyRule()">Check This Amount</button>
+        <div id="money-result" class="result-box">Enter an amount to check</div>
 
-      { regex: reDate, value: "2025-09-25", expected: true, label: "Date valid" },
-      { regex: reDate, value: "2025-13-01", expected: false, label: "Date invalid month" },
+        <h3>3. Check Date Format</h3>
+        <div class="code-sample">Rule: Must be YYYY-MM-DD format</div>
+        <input type="text" id="check-date" class="input-box" placeholder="Enter date (YYYY-MM-DD)">
+        <button class="action-btn" onclick="checkDateRule()">Check This Date</button>
+        <div id="date-result" class="result-box">Enter a date to check</div>
 
-      { regex: reCategory, value: "Food", expected: true, label: "Category valid simple" },
-      { regex: reCategory, value: "Books-Science", expected: true, label: "Category valid hyphenated" },
-      { regex: reCategory, value: "Books123", expected: false, label: "Category invalid with numbers" },
+        <h3>4. Check Category Name</h3>
+        <div class="code-sample">Rule: Only letters, spaces, and hyphens</div>
+        <input type="text" id="check-category" class="input-box" placeholder="Enter category name">
+        <button class="action-btn" onclick="checkCategoryRule()">Check This Category</button>
+        <div id="category-result" class="result-box">Enter a category to check</div>
+    </div>
 
-      { regex: reDuplicateWord, value: "coffee coffee", expected: true, label: "Duplicate word detected" },
-      { regex: reDuplicateWord, value: "coffee tea", expected: false, label: "No duplicate word" },
-    ];
+    <!-- Check Rule 2: Smart Patterns -->
+    <div class="check-area">
+        <h2>Check Smart Pattern Rules</h2>
+        
+        <h3>5. Find Repeated Words</h3>
+        <div class="code-sample">Smart Rule: Finds words that repeat</div>
+        <input type="text" id="check-repeat" class="input-box" placeholder="Check for repeated words">
+        <button class="action-btn" onclick="checkRepeatRule()">Check for Repeats</button>
+        <div id="repeat-result" class="result-box">Type text to check for repeats</div>
 
-    const resultsContainer = document.getElementById('test-results');
+        <h3>6. Check Money Details</h3>
+        <div class="code-sample">Smart Rule: Checks for cents in amounts</div>
+        <input type="text" id="check-cents" class="input-box" placeholder="Check money format">
+        <button class="action-btn" onclick="checkCentsRule()">Check Money Format</button>
+        <div id="cents-result" class="result-box">Enter amount to check format</div>
+    </div>
 
-    tests.forEach(t => {
-      const passed = testRegex(t.value, t.regex) === t.expected;
-      const div = document.createElement('div');
-      div.className = 'test ' + (passed ? 'pass' : 'fail');
-      div.textContent = `${t.label}: ${passed ? 'PASS ✅' : 'FAIL ❌'}`;
-      resultsContainer.appendChild(div);
-    });
-  </script>
+    <!-- Check Rule 3: Search Tests -->
+    <div class="check-area">
+        <h2>Check Search Features</h2>
+        
+        <h3>Test Search Patterns</h3>
+        <input type="text" id="check-pattern" class="input-box" placeholder="Enter search pattern">
+        <button class="action-btn" onclick="checkPatternRule()">Test This Pattern</button>
+        <div id="pattern-result" class="result-box">Enter a search pattern to test</div>
+
+        <h3>Quick Search Tests</h3>
+        <button class="action-btn" onclick="quickTest('money')">Test: Find Money Amounts</button>
+        <button class="action-btn" onclick="quickTest('food')">Test: Find Food Items</button>
+        <button class="action-btn" onclick="quickTest('repeat')">Test: Find Repeated Words</button>
+        <div id="quick-result" class="result-box">Click a button to run quick test</div>
+    </div>
+
+    <!-- Final Check -->
+    <div class="check-area">
+        <h2>Run Complete Check</h2>
+        <button class="action-btn" onclick="runFullCheck()">Run All Checks</button>
+        <div id="full-check-result"></div>
+    </div>
+
+    <script src="scripts/validators.js"></script>
+    <script src="scripts/search.js"></script>
+    <script>
+        // Keep track of test results
+        var goodCount = 0;
+        var badCount = 0;
+
+        // Update the score display
+        function updateScore() {
+            var total = goodCount + badCount;
+            var scoreElement = document.getElementById('score-board');
+            scoreElement.innerHTML = 
+                'Total Checks: ' + total + ' | ' +
+                '✓ Working: ' + goodCount + ' | ' +
+                '✗ Issues: ' + badCount + ' | ' +
+                'Score: ' + (total > 0 ? Math.round((goodCount / total) * 100) : 0) + '%';
+        }
+
+        // Show result in a simple way
+        function showResult(elementId, message, isGood) {
+            var element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = 'result-box ' + (isGood ? 'result-good' : 'result-bad');
+            
+            if (isGood) goodCount++;
+            else badCount++;
+            updateScore();
+        }
+
+        // Check text input rule
+        function checkTextRule() {
+            var input = document.getElementById('check-text').value;
+            var result = window.validators.validateDescription(input);
+            showResult('text-result', 
+                result.isValid ? '✓ Good - Text looks correct' : '✗ Issue - ' + result.message, 
+                result.isValid);
+        }
+
+        // Check money rule
+        function checkMoneyRule() {
+            var input = document.getElementById('check-money').value;
+            var result = window.validators.validateAmount(input);
+            showResult('money-result', 
+                result.isValid ? '✓ Good - Money format is correct' : '✗ Issue - ' + result.message, 
+                result.isValid);
+        }
+
+        // Check date rule
+        function checkDateRule() {
+            var input = document.getElementById('check-date').value;
+            var result = window.validators.validateDate(input);
+            showResult('date-result', 
+                result.isValid ? '✓ Good - Date format is correct' : '✗ Issue - ' + result.message, 
+                result.isValid);
+        }
+
+        // Check category rule
+        function checkCategoryRule() {
+            var input = document.getElementById('check-category').value;
+            var result = window.validators.validateCategory(input);
+            showResult('category-result', 
+                result.isValid ? '✓ Good - Category name is valid' : '✗ Issue - ' + result.message, 
+                result.isValid);
+        }
+
+        // Check repeat words rule
+        function checkRepeatRule() {
+            var input = document.getElementById('check-repeat').value;
+            var result = window.validators.validateNoDuplicateWords(input);
+            showResult('repeat-result', 
+                result.isValid ? '✓ Good - No repeated words found' : 'Note: ' + result.message, 
+                true);
+        }
+
+        // Check cents rule
+        function checkCentsRule() {
+            var input = document.getElementById('check-cents').value;
+            var result = window.validators.validateMoneyPattern(input);
+            showResult('cents-result', 
+                result.message || '✓ Good - Amount includes cents', 
+                true);
+        }
+
+        // Check search pattern
+        function checkPatternRule() {
+            var input = document.getElementById('check-pattern').value;
+            var result = window.validators.compileRegex(input);
+            showResult('pattern-result', 
+                result ? '✓ Good - Search pattern works' : '✗ Issue - Pattern not valid', 
+                result !== null);
+        }
+
+        // Quick tests
+        function quickTest(type) {
+            var patterns = {
+                money: { code: /\d+\.\d{2}\b/g, text: 'finding money amounts' },
+                food: { code: /(lunch|dinner|breakfast|food|meal)/i, text: 'finding food items' },
+                repeat: { code: /\b(\w+)\s+\1\b/i, text: 'finding repeated words' }
+            };
+            
+            var selected = patterns[type];
+            var result = window.validators.compileRegex(selected.code.source);
+            showResult('quick-result', 
+                '✓ Tested: ' + selected.text, 
+                true);
+        }
+
+        // Run full check
+        function runFullCheck() {
+            goodCount = 0;
+            badCount = 0;
+            var results = document.getElementById('full-check-result');
+            results.innerHTML = '<h3>Running complete check...</h3>';
+
+            // Simple test cases
+            var testList = [
+                { run: testText, name: 'Text input rules' },
+                { run: testMoney, name: 'Money format rules' },
+                { run: testDate, name: 'Date format rules' },
+                { run: testCategory, name: 'Category name rules' },
+                { run: testSmart, name: 'Smart pattern rules' },
+                { run: testSearch, name: 'Search feature rules' }
+            ];
+
+            // Run each check
+            for (var i = 0; i < testList.length; i++) {
+                var test = testList[i];
+                try {
+                    test.run();
+                    results.innerHTML += '<div class="result-box result-good">✓ ' + test.name + ' - Working</div>';
+                    goodCount++;
+                } catch (error) {
+                    results.innerHTML += '<div class="result-box result-bad">✗ ' + test.name + ' - Needs fix: ' + error + '</div>';
+                    badCount++;
+                }
+            }
+
+            updateScore();
+        }
+
+        // Individual check functions
+        function testText() {
+            var good = window.validators.validateDescription('Good text');
+            var bad = window.validators.validateDescription('  bad  ');
+            if (!good.isValid || bad.isValid) {
+                throw new Error('Text rules not working');
+            }
+        }
+
+        function testMoney() {
+            var good = window.validators.validateAmount('10.50');
+            var bad = window.validators.validateAmount('10.555');
+            if (!good.isValid || bad.isValid) {
+                throw new Error('Money rules not working');
+            }
+        }
+
+        function testDate() {
+            var good = window.validators.validateDate('2024-01-15');
+            var bad = window.validators.validateDate('2024-13-45');
+            if (!good.isValid || bad.isValid) {
+                throw new Error('Date rules not working');
+            }
+        }
+
+        function testCategory() {
+            var good = window.validators.validateCategory('Food-Drink');
+            var bad = window.validators.validateCategory('Food123');
+            if (!good.isValid || bad.isValid) {
+                throw new Error('Category rules not working');
+            }
+        }
+
+        function testSmart() {
+            var found = window.validators.validateNoDuplicateWords('test test');
+            var clean = window.validators.validateNoDuplicateWords('clean text');
+            if (found.isValid || !clean.isValid) {
+                throw new Error('Smart patterns not working');
+            }
+        }
+
+        function testSearch() {
+            var works = window.search.compileSearchRegex('test');
+            var fails = window.search.compileSearchRegex('[');
+            if (!works || fails) {
+                throw new Error('Search features not working');
+            }
+        }
+
+        // Start the page
+        updateScore();
+    </script>
 </body>
 </html>

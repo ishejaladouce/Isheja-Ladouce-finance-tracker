@@ -32,43 +32,42 @@ body {
   top: 6px;
 }
 
-/* Header - REMOVED */
+/* Header - VISIBLE */
 header {
-  display: none;
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
 }
 
-/* Hamburger Menu - FIXED FOR MOBILE */
+/* ===== HAMBURGER MENU - RIGHT CORNER ===== */
 .menu-toggle {
   position: fixed;
-  top: 20px;
-  left: 20px;
-  background: #1e293b;
-  border: 2px solid #f59e0b;
-  color: #f59e0b;
-  font-size: 1.8rem;
-  cursor: pointer;
-  padding: 0.75rem;
-  border-radius: 8px;
-  transition: all 0.3s ease;
+  top: 15px;
+  right: 15px;
+  z-index: 10001;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  color: #f8fafc;
+  border: 1.5px solid rgba(30, 41, 59, 0.3);
+  border-radius: 6px;
+  font-size: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 60px;
-  height: 60px;
-  z-index: 1001;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.menu-toggle:hover,
-.menu-toggle:focus {
-  background-color: #f59e0b;
-  color: #1e293b;
-  transform: scale(1.1);
-  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
+.menu-toggle:hover {
+  border-color: rgba(30, 41, 59, 0.6);
+  transform: scale(1.05);
 }
 
 .menu-toggle:active {
-  transform: scale(0.95);
+  transform: scale(0.95) !important;
 }
 
 /* Main Layout */
@@ -77,7 +76,7 @@ header {
   min-height: 100vh;
 }
 
-/* Side Menu */
+/* SIDE MENU */
 .side-menu {
   width: 280px;
   background: #1e293b;
@@ -87,8 +86,8 @@ header {
   left: -280px;
   height: 100vh;
   overflow-y: auto;
-  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 1000;
+  transition: left 0.3s ease;
+  z-index: 10000;
   box-shadow: 2px 0 8px rgba(0,0,0,0.1);
 }
 
@@ -935,47 +934,14 @@ body.font-large {
   font-size: 18px;
 }
 
-/* ===== RESPONSIVE DESIGN - FIXED ===== */
+/* ===== RESPONSIVE DESIGN ===== */
 
-/* Mobile (default) - HAMBURGER ALWAYS VISIBLE */
-.menu-toggle {
-  display: flex !important; /* Force show on mobile */
-}
-
-.side-menu {
-  left: -280px; /* Hidden by default on mobile */
-}
-
-.side-menu.active {
-  left: 0; /* Show when active */
-}
-
-.summary-cards {
-  grid-template-columns: 1fr;
-}
-
-.mobile-cards {
-  display: none;
-}
-
-/* Tablet */
-@media (min-width: 768px) {
-  .summary-cards {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .main-content-area {
-    padding: 2rem;
-  }
-  
-  .search-box,
-  .sort-options {
-    flex-wrap: nowrap;
-  }
-  
-  /* Hamburger still visible on tablet */
+/* MOBILE & TABLET - HAMBURGER ALWAYS VISIBLE */
+@media (max-width: 1023px) {
   .menu-toggle {
     display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
   
   .side-menu {
@@ -985,21 +951,36 @@ body.font-large {
   .side-menu.active {
     left: 0;
   }
+  
+  .main-content-area {
+    margin-left: 0 !important;
+    padding: 1rem;
+  }
+  
+  .summary-cards {
+    grid-template-columns: 1fr;
+  }
 }
 
-/* Desktop */
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .summary-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .main-content-area {
+    padding: 2rem;
+  }
+}
+
+/* DESKTOP - HAMBURGER HIDDEN, SIDEBAR ALWAYS VISIBLE */
 @media (min-width: 1024px) {
-  /* Hide hamburger on desktop */
   .menu-toggle {
     display: none !important;
   }
   
-  /* Side menu always visible on desktop */
   .side-menu {
-    position: fixed;
     left: 0 !important;
-    top: 0;
-    height: 100vh;
   }
   
   .main-content-area {
@@ -1011,28 +992,9 @@ body.font-large {
   .summary-cards {
     grid-template-columns: repeat(3, 1fr);
   }
-  
-  .transactions-table {
-    min-width: auto;
-  }
-  
-  .content-panel {
-    padding: 0 1rem;
-  }
-  
-  .status-message {
-    left: calc(50% + 140px);
-  }
 }
 
-/* Large desktop */
-@media (min-width: 1280px) {
-  .main-content-area {
-    padding: 3rem;
-  }
-}
-
-/* Mobile cards and responsive fixes */
+/* Mobile specific styles */
 @media (max-width: 767px) {
   .transactions-table {
     display: none;
@@ -1042,53 +1004,18 @@ body.font-large {
     display: block;
   }
   
-  .main-content-area {
-    padding: 1rem;
-    margin-left: 0 !important; /* Ensure no margin on mobile */
-  }
-  
   .form-panel,
   .settings-panel,
   .about-panel {
     padding: 1.5rem;
     margin: 0.5rem;
-    min-height: auto;
   }
   
   .form-buttons {
     flex-direction: column;
-    margin-top: 1.5rem;
-    margin-bottom: 0.5rem;
-    padding-top: 1.5rem;
   }
   
   .form-buttons button {
-    width: 100%;
-  }
-  
-  .contact-links {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .contact-link {
-    width: 100%;
-    max-width: 200px;
-    text-align: center;
-  }
-  
-  .status-message {
-    left: 50%;
-    margin: 0 1rem;
-    min-width: auto;
-    width: calc(100% - 2rem);
-  }
-  
-  .mobile-card-actions {
-    flex-direction: column;
-  }
-  
-  .mobile-card-actions button {
     width: 100%;
   }
   
@@ -1102,44 +1029,25 @@ body.font-large {
   .search-box input,
   .sort-options select {
     width: 100%;
-    min-width: auto;
   }
   
   #clear-search {
     width: 100%;
   }
   
-  /* About page mobile adjustments */
-  .about-panel {
-    padding: 2rem;
-    margin: 0.5rem;
+  .mobile-card-actions {
+    flex-direction: column;
   }
   
-  .about-panel h2 {
-    font-size: 1.8rem;
-    margin-bottom: 2rem;
+  .mobile-card-actions button {
+    width: 100%;
   }
-  
-  .about-content {
-    gap: 2rem;
-  }
-  
-  .about-content p {
-    font-size: 1.1rem;
-  }
-  
-  .quote-section {
-    padding: 2rem;
-    margin: 0.5rem 0;
-  }
-  
-  .inspirational-quote {
-    font-size: 1.3rem;
-  }
-  
-  .inspirational-quote cite {
-    font-size: 1rem;
-    margin-top: 1rem;
+}
+
+/* Large desktop */
+@media (min-width: 1280px) {
+  .main-content-area {
+    padding: 3rem;
   }
 }
 

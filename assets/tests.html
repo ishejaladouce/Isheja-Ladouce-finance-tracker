@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Validator Tests</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2rem; background: #f5f5f5; }
+    h1 { color: #333; }
+    .pass { color: green; }
+    .fail { color: red; }
+    .test { margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Validator Tests</h1>
+  <div id="test-results"></div>
+
+  <script type="module">
+    import { reDescription, reAmount, reDate, reCategory, reDuplicateWord, testRegex } from './scripts/validators.js';
+
+    const tests = [
+      { regex: reDescription, value: "Lunch at cafe", expected: true, label: "Description valid" },
+      { regex: reDescription, value: "  Lunch  ", expected: false, label: "Description invalid (spaces)" },
+
+      { regex: reAmount, value: "12", expected: true, label: "Amount valid integer" },
+      { regex: reAmount, value: "12.50", expected: true, label: "Amount valid decimal" },
+      { regex: reAmount, value: "12.999", expected: false, label: "Amount invalid decimal" },
+
+      { regex: reDate, value: "2025-09-25", expected: true, label: "Date valid" },
+      { regex: reDate, value: "2025-13-01", expected: false, label: "Date invalid month" },
+
+      { regex: reCategory, value: "Food", expected: true, label: "Category valid simple" },
+      { regex: reCategory, value: "Books-Science", expected: true, label: "Category valid hyphenated" },
+      { regex: reCategory, value: "Books123", expected: false, label: "Category invalid with numbers" },
+
+      { regex: reDuplicateWord, value: "coffee coffee", expected: true, label: "Duplicate word detected" },
+      { regex: reDuplicateWord, value: "coffee tea", expected: false, label: "No duplicate word" },
+    ];
+
+    const resultsContainer = document.getElementById('test-results');
+
+    tests.forEach(t => {
+      const passed = testRegex(t.value, t.regex) === t.expected;
+      const div = document.createElement('div');
+      div.className = 'test ' + (passed ? 'pass' : 'fail');
+      div.textContent = `${t.label}: ${passed ? 'PASS ✅' : 'FAIL ❌'}`;
+      resultsContainer.appendChild(div);
+    });
+  </script>
+</body>
+</html>

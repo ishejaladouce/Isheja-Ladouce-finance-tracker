@@ -1,0 +1,12 @@
+[
+  {"id":"txn_1001","description":"Lunch at cafeteria","amount":12.50,"category":"Food","date":"2025-09-25","createdAt":"2025-09-25T10:00:00Z","updatedAt":"2025-09-25T10:00:00Z"},
+  {"id":"txn_1002","description":"Chemistry textbook","amount":89.99,"category":"Books","date":"2025-09-23","createdAt":"2025-09-23T11:00:00Z","updatedAt":"2025-09-23T11:00:00Z"},
+  {"id":"txn_1003","description":"Bus pass","amount":45.00,"category":"Transport","date":"2025-09-20","createdAt":"2025-09-20T09:00:00Z","updatedAt":"2025-09-20T09:00:00Z"},
+  {"id":"txn_1004","description":"Coffee coffee","amount":8.75,"category":"Food","date":"2025-09-28","createdAt":"2025-09-28T08:00:00Z","updatedAt":"2025-09-28T08:00:00Z"},
+  {"id":"txn_1005","description":"Cinema night","amount":15.00,"category":"Entertainment","date":"2025-09-26","createdAt":"2025-09-26T20:00:00Z","updatedAt":"2025-09-26T20:00:00Z"},
+  {"id":"txn_1006","description":"Exam fees - semester 1","amount":120.00,"category":"Fees","date":"2025-09-10","createdAt":"2025-09-10T12:00:00Z","updatedAt":"2025-09-10T12:00:00Z"},
+  {"id":"txn_1007","description":"Stationery set","amount":23.45,"category":"Books","date":"2025-08-30","createdAt":"2025-08-30T14:00:00Z","updatedAt":"2025-08-30T14:00:00Z"},
+  {"id":"txn_1008","description":"Group study snacks","amount":6.00,"category":"Food","date":"2025-09-29","createdAt":"2025-09-29T18:00:00Z","updatedAt":"2025-09-29T18:00:00Z"},
+  {"id":"txn_1009","description":"Taxi-home","amount":32.00,"category":"Transport","date":"2025-09-24","createdAt":"2025-09-24T23:00:00Z","updatedAt":"2025-09-24T23:00:00Z"},
+  {"id":"txn_1010","description":"Coffee with friends","amount":4.20,"category":"Entertainment","date":"2025-09-22","createdAt":"2025-09-22T07:30:00Z","updatedAt":"2025-09-22T07:30:00Z"}
+]

@@ -3,32 +3,36 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Finance Tracker</title>
+  <title>Student Finance Tracker</title>
   <link rel="stylesheet" href="./styles/style.css" />
 </head>
 <body>
   <a href="#main-content" class="skip-link">Skip to main content</a>
 
-  <header>
-    <button class="hamburger" aria-label="Toggle navigation">☰</button>
-    <h1>Finance Tracker</h1>
+  <header role="banner">
+    <button class="hamburger" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+    <h1>Student Finance Tracker</h1>
   </header>
 
+  <!-- Status messages for screen readers -->
+  <div id="status-message" class="status-message" aria-live="polite" aria-atomic="true"></div>
+
   <div class="main-layout">
-    <aside class="sidebar">
+    <aside class="sidebar" aria-label="Main navigation">
       <nav>
         <ul>
-          <li><a href="#dashboard">Dashboard</a></li>
-          <li><a href="#records">Records</a></li>
-          <li><a href="#form-section">Add Record</a></li>
-          <li><a href="#settings-section">Settings</a></li>
+          <li><a href="#about-section" class="nav-link" data-section="about">About</a></li>
+          <li><a href="#dashboard" class="nav-link" data-section="dashboard">Dashboard</a></li>
+          <li><a href="#records" class="nav-link" data-section="records">Records</a></li>
+          <li><a href="#form-section" class="nav-link" data-section="form">Add Record</a></li>
+          <li><a href="#settings-section" class="nav-link" data-section="settings">Settings</a></li>
         </ul>
       </nav>
     </aside>
 
-    <main id="main-content" class="content-area">
+    <main id="main-content" role="main" class="content-area">
       <!-- About Section -->
-      <section id="about-section">
+      <section id="about-section" class="content-section active">
         <h2>About</h2>
         <p>
           This Student Finance Tracker was built by <strong>ISHEJA Ladouce</strong>
@@ -42,7 +46,7 @@
       </section>
 
       <!-- Dashboard Section -->
-      <section id="dashboard">
+      <section id="dashboard" class="content-section">
         <h2>Dashboard</h2>
 
         <div class="dashboard-cards">
@@ -61,39 +65,65 @@
             <p id="cap-status">Within Limit</p>
           </div>
         </div>
+        
         <div class="dashboard-chart" aria-label="Spending trend for last 7 days">
-          <!-- JS will populate chart here -->
+          <h3>Last 7 Days Spending</h3>
+          <div id="chart-container" class="chart-container">
+            <!-- JS will populate chart here -->
+          </div>
         </div>
       </section>
 
       <!-- Records Section -->
-      <section id="records">
+      <section id="records" class="content-section">
         <h2>Records</h2>
 
-        <table class="records-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Description</th>
-              <th>Amount</th>
-              <th>Category</th>
-              <th>Date</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
+        <!-- Search functionality -->
+        <div class="search-container">
+          <label for="search-input">Search Transactions:</label>
+          <input type="text" id="search-input" placeholder="Enter search pattern (regex supported)" />
+          <button id="clear-search" type="button">Clear</button>
+        </div>
 
-          <tbody id="records-body">
-            <!-- JS will populate table rows here -->
-          </tbody>
-        </table>
+        <!-- Sort functionality -->
+        <div class="sort-container">
+          <label for="sort-select">Sort by:</label>
+          <select id="sort-select">
+            <option value="date-desc">Date (Newest)</option>
+            <option value="date-asc">Date (Oldest)</option>
+            <option value="amount-desc">Amount (High to Low)</option>
+            <option value="amount-asc">Amount (Low to High)</option>
+            <option value="description-asc">Description (A-Z)</option>
+            <option value="description-desc">Description (Z-A)</option>
+          </select>
+        </div>
 
-        <div class="records-cards" id="records-cards">
+        <div class="table-container">
+          <table class="records-table" aria-label="Transaction records">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th>Amount</th>
+                <th>Category</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="records-body">
+              <tr id="empty-state">
+                <td colspan="5" class="empty-message">No transactions yet. Add your first transaction above!</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="records-cards" id="records-cards" aria-label="Transaction cards for mobile view">
           <!-- JS will populate mobile cards here -->
         </div>
       </section>
 
       <!-- Add/Edit Form Section -->
-      <section id="form-section" class="form-section">
+      <section id="form-section" class="content-section form-section">
         <h2>Add / Edit Transaction</h2>
         <form id="transaction-form" novalidate>
           <div class="form-group">
@@ -110,7 +140,15 @@
 
           <div class="form-group">
             <label for="category">Category</label>
-            <input type="text" id="category" name="category" placeholder="Food, Books, etc." required />
+            <select id="category" name="category" required>
+              <option value="">Select a category</option>
+              <option value="Food">Food</option>
+              <option value="Books">Books</option>
+              <option value="Transport">Transport</option>
+              <option value="Entertainment">Entertainment</option>
+              <option value="Fees">Fees</option>
+              <option value="Other">Other</option>
+            </select>
             <small class="error-message" aria-live="polite"></small>
           </div>
 
@@ -120,46 +158,51 @@
             <small class="error-message" aria-live="polite"></small>
           </div>
 
+          <input type="hidden" id="edit-id" name="edit-id" />
+
           <div class="form-actions">
             <button type="submit" id="submit-btn">Add Transaction</button>
-            <button type="reset">Reset</button>
+            <button type="reset" id="cancel-edit" style="display: none;">Cancel Edit</button>
           </div>
         </form>
       </section>
 
       <!-- Settings Section -->
-      <section id="settings-section" class="settings-section">
+      <section id="settings-section" class="content-section settings-section">
         <h2>Settings</h2>
+        
         <div class="form-group">
-          <label for="budget-cap">Budget Cap ($)</label>
+          <label for="budget-cap">Monthly Budget Cap ($)</label>
           <input type="number" id="budget-cap" name="budget-cap" placeholder="0.00" step="0.01" />
-          <small class="info-message" aria-live="polite">Set a maximum spending limit.</small>
-        </div>
-        <div class="form-group">
-          <label for="unit">Units</label>
-          <input type="text" id="unit" name="unit" placeholder="e.g., minutes, pages" />
-          <small class="info-message" aria-live="polite">Define units for tracking.</small>
+          <small class="info-message">Set a maximum monthly spending limit.</small>
         </div>
 
         <div class="form-group">
-          <label for="currency">Base Currency</label>
-          <select id="currency" name="currency">
-            <option value="USD" selected>USD</option>
-            <option value="EUR">EUR</option>
-            <option value="GBP">GBP</option>
+          <label for="base-currency">Base Currency</label>
+          <select id="base-currency" name="base-currency">
+            <option value="USD" selected>USD - US Dollar</option>
+            <option value="EUR">EUR - Euro</option>
+            <option value="GBP">GBP - British Pound</option>
           </select>
-          <small class="info-message" aria-live="polite">Select your default currency.</small>
+        </div>
+
+        <div class="form-group">
+          <label for="json-import">Import JSON Data</label>
+          <textarea id="json-import" placeholder="Paste your JSON data here..."></textarea>
+          <button type="button" id="import-btn">Import Data</button>
+          <small class="info-message">Validate and import transaction data.</small>
         </div>
 
         <div class="form-actions">
+          <button type="button" id="export-btn">Export JSON</button>
           <button type="button" id="save-settings-btn">Save Settings</button>
+          <button type="button" id="reset-data-btn" class="danger">Reset All Data</button>
         </div>
-
       </section>
     </main>
   </div>
 
-  <footer>
+  <footer role="contentinfo">
     <p>&copy; 2025 Ladouce Isheja | Student Finance Tracker</p>
     <p>
       Contact:
@@ -168,6 +211,6 @@
     </p>
   </footer>
 
-  <script src="scripts/main.js"></script>
+  <script type="module" src="./scripts/main.js"></script>
 </body>
 </html>

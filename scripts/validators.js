@@ -1,5 +1,3 @@
-// scripts/validators.js - Input Validation System
-
 // Safe pattern compiler
 function compileSearchPattern(input, flags) {
     if (typeof flags === 'undefined') flags = 'i';

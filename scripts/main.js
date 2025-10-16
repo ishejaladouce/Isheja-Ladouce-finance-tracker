@@ -1,5 +1,3 @@
-// scripts/main.js - COMPLETE FILE
-
 // Initialize the entire application
 function startApplication() {
     console.log('Starting Money Tracker Application...');
@@ -114,7 +112,7 @@ function setupHamburgerMenu() {
     }
 }
 
-// ===== SPENDING LIMIT FUNCTIONALITY =====
+// SPENDING LIMIT FUNCTIONALITY 
 function initializeSpendingLimit() {
     console.log('Initializing spending limit...');
     loadSpendingLimit();
@@ -301,7 +299,7 @@ function refreshBudgetStatus() {
     updateBudgetDisplay();
 }
 
-// ===== THEME AND PREFERENCES FUNCTIONALITY =====
+//THEME AND PREFERENCES FUNCTIONALITy
 function setupThemeAndPreferences() {
     console.log('Setting up theme and preferences...');
     setupThemeSwitching();
@@ -338,7 +336,7 @@ function setupOtherPreferences() {
     
     if (dateStyleSelector) {
         dateStyleSelector.addEventListener('change', function() {
-            // You can add real-time date format updates here if needed
+            
         });
     }
 }

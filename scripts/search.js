@@ -1,5 +1,3 @@
-// scripts/search.js - Search and Filter System
-
 var currentSearch = {
     query: '',
     pattern: null,

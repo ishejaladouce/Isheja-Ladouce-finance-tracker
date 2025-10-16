@@ -1,5 +1,3 @@
-// scripts/storage.js - Complete Storage with Auto-Load Samples
-
 // Storage keys
 var DATA_STORAGE_KEY = 'moneyTrackerData';
 var USER_SETTINGS_KEY = 'userPreferences';

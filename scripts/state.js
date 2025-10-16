@@ -1,5 +1,3 @@
-// scripts/state.js - Application State Management
-
 // Current application state
 var currentAppState = {
     transactions: [],

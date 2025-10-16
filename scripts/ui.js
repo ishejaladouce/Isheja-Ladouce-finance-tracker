@@ -1,5 +1,3 @@
-// scripts/ui.js - User Interface Management
-
 // Initialize UI system
 function initializeUserInterface() {
     console.log('User interface system initialized');

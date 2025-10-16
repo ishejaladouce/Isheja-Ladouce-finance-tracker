@@ -32,7 +32,7 @@ body {
   top: 6px;
 }
 
-/* Header */
+/* Header - Fixed at top */
 header {
   display: flex;
   align-items: center;
@@ -40,9 +40,12 @@ header {
   background: #1e293b;
   color: white;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 100;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: 70px;
 }
 
 header h1 {
@@ -68,24 +71,25 @@ header h1 {
   outline: 2px solid #f59e0b;
 }
 
-/* Main layout */
+/* Main layout - accounts for fixed header */
 .main-layout {
   display: flex;
-  min-height: calc(100vh - 80px);
+  min-height: calc(100vh - 70px);
+  margin-top: 70px;
 }
 
-/* Sidebar navigation */
+/* Sidebar navigation - fixed below header */
 .sidebar {
   width: 260px;
   background: #1e293b;
   padding: 1.5rem 0;
   position: fixed;
-  top: 0;
+  top: 70px;
   left: -280px;
-  height: 100vh;
+  height: calc(100vh - 70px);
   overflow-y: auto;
   transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 1000;
+  z-index: 999;
   box-shadow: 2px 0 8px rgba(0,0,0,0.1);
 }
 
@@ -127,14 +131,17 @@ header h1 {
 /* Main content area */
 .content-area {
   flex: 1;
-  padding: 1.5rem;
+  padding: 2rem;
   transition: margin-left 0.3s ease;
   max-width: 100%;
+  min-height: calc(100vh - 70px);
 }
 
 .content-section {
   display: none;
   animation: fadeIn 0.3s ease;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .content-section.active {
@@ -325,10 +332,22 @@ button.danger:hover {
 .search-container,
 .sort-container {
   margin-bottom: 1rem;
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.search-container label,
+.sort-container label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
 }
 
 .search-container input {
   max-width: 400px;
+  margin-right: 0.5rem;
 }
 
 /* Status messages */
@@ -406,15 +425,15 @@ footer a:hover {
   }
   
   .sidebar {
-    position: sticky;
+    position: fixed;
     left: 0;
-    height: calc(100vh - 80px);
-    top: 80px;
+    height: calc(100vh - 70px);
   }
   
   .content-area {
     margin-left: 260px;
     padding: 2.5rem;
+    max-width: calc(100% - 260px);
   }
   
   .dashboard-cards {
@@ -424,15 +443,22 @@ footer a:hover {
   .records-table {
     min-width: auto;
   }
+  
+  .content-section {
+    padding: 0 1rem;
+  }
 }
 
 /* Large desktop */
 @media (min-width: 1280px) {
   .content-area {
-    max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
     padding: 3rem;
+  }
+  
+  .content-section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0;
   }
 }
 
@@ -469,6 +495,14 @@ footer a:hover {
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   margin-top: 1rem;
+}
+
+/* Empty state */
+.empty-message {
+  text-align: center;
+  color: #64748b;
+  padding: 3rem 1rem;
+  font-style: italic;
 }
 
 /* Print styles */

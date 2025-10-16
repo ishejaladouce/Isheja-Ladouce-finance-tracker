@@ -1,30 +1,34 @@
-// Safe regex compiler
-function compileRegex(input, flags) {
+// scripts/validators.js - Input Validation System
+
+// Safe pattern compiler
+function compileSearchPattern(input, flags) {
     if (typeof flags === 'undefined') flags = 'i';
     try {
         return input ? new RegExp(input, flags) : null;
     } catch (error) {
-        console.warn('Invalid regex pattern:', input, error);
+        console.log('Invalid search pattern:', input, error);
         return null;
     }
 }
 
-//Description: No leading/trailing spaces, collapse doubles
-function validateDescription(description) {
-    var regex = /^\S(?:.*\S)?$/;
-    var isValid = regex.test(description);
+// Validation rules
+
+// 1. Description validation
+function validateDescription(text) {
+    var pattern = /^\S(?:.*\S)?$/;
+    var isValid = pattern.test(text);
     
     return {
         isValid: isValid,
-        message: isValid ? '' : 'Description cannot have leading or trailing spaces',
-        cleaned: isValid ? description.trim().replace(/\s+/g, ' ') : description
+        message: isValid ? '' : 'Description cannot have spaces at start or end',
+        cleaned: isValid ? text.trim().replace(/\s+/g, ' ') : text
     };
 }
 
-//Amount: Valid number format (0-2 decimal places)
+// 2. Amount validation
 function validateAmount(amount) {
-    var regex = /^(0|[1-9]\d*)(\.\d{1,2})?$/;
-    var isValid = regex.test(amount.toString());
+    var pattern = /^(0|[1-9]\d*)(\.\d{1,2})?$/;
+    var isValid = pattern.test(amount.toString());
     
     return {
         isValid: isValid,
@@ -33,10 +37,10 @@ function validateAmount(amount) {
     };
 }
 
-//Date: YYYY-MM-DD format
+// 3. Date validation
 function validateDate(dateString) {
-    var regex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
-    var isValid = regex.test(dateString);
+    var pattern = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
+    var isValid = pattern.test(dateString);
     
     if (isValid) {
         var date = new Date(dateString);
@@ -54,15 +58,15 @@ function validateDate(dateString) {
     
     return {
         isValid: isValid,
-        message: isValid ? '' : 'Date must be in YYYY-MM-DD format and valid',
+        message: isValid ? '' : 'Date must be in YYYY-MM-DD format',
         cleaned: dateString
     };
 }
 
-//Category: Letters, spaces, hyphens only
+// 4. Category validation
 function validateCategory(category) {
-    var regex = /^[A-Za-z]+(?:[ -][A-Za-z]+)*$/;
-    var isValid = regex.test(category);
+    var pattern = /^[A-Za-z]+(?:[ -][A-Za-z]+)*$/;
+    var isValid = pattern.test(category);
     
     return {
         isValid: isValid,
@@ -71,78 +75,77 @@ function validateCategory(category) {
     };
 }
 
-//Detect duplicate words in description
-function validateNoDuplicateWords(description) {
-    var regex = /\b(\w+)\s+\1\b/i;
-    var hasDuplicates = regex.test(description);
+// 5. Advanced: Duplicate words detection
+function checkForDuplicateWords(text) {
+    var pattern = /\b(\w+)\s+\1\b/i;
+    var hasDuplicates = pattern.test(text);
     
     return {
         isValid: !hasDuplicates,
-        message: hasDuplicates ? 'Description contains duplicate words' : '',
-        cleaned: description
+        message: hasDuplicates ? 'Description contains repeated words' : '',
+        cleaned: text
     };
 }
 
-// 6. ADVANCED REGEX: Detect common money patterns
-function validateMoneyPattern(amount) {
-    var regex = /\.\d{2}\b/;
-    var hasCents = regex.test(amount.toString());
+// 6. Advanced: Money pattern detection
+function checkMoneyFormat(amount) {
+    var pattern = /\.\d{2}\b/;
+    var hasCents = pattern.test(amount.toString());
     
     return {
         isValid: true,
-        message: hasCents ? '' : 'Consider adding cents for precise tracking',
+        message: hasCents ? '' : 'Consider adding cents for better tracking',
         cleaned: amount
     };
 }
 
 // Complete transaction validation
-function validateTransaction(transactionData) {
+function validateCompleteTransaction(transactionData) {
     var errors = {};
-    var cleanedData = {};
+    var cleanData = {};
     
     // Validate description
-    var descValidation = validateDescription(transactionData.description);
-    if (!descValidation.isValid) {
-        errors.description = descValidation.message;
+    var descCheck = validateDescription(transactionData.description);
+    if (!descCheck.isValid) {
+        errors.description = descCheck.message;
     }
-    cleanedData.description = descValidation.cleaned;
+    cleanData.description = descCheck.cleaned;
     
     // Validate amount
-    var amountValidation = validateAmount(transactionData.amount);
-    if (!amountValidation.isValid) {
-        errors.amount = amountValidation.message;
+    var amountCheck = validateAmount(transactionData.amount);
+    if (!amountCheck.isValid) {
+        errors.amount = amountCheck.message;
     }
-    cleanedData.amount = amountValidation.cleaned;
+    cleanData.amount = amountCheck.cleaned;
     
     // Validate category
-    var categoryValidation = validateCategory(transactionData.category);
-    if (!categoryValidation.isValid) {
-        errors.category = categoryValidation.message;
+    var categoryCheck = validateCategory(transactionData.category);
+    if (!categoryCheck.isValid) {
+        errors.category = categoryCheck.message;
     }
-    cleanedData.category = categoryValidation.cleaned;
+    cleanData.category = categoryCheck.cleaned;
     
     // Validate date
-    var dateValidation = validateDate(transactionData.date);
-    if (!dateValidation.isValid) {
-        errors.date = dateValidation.message;
+    var dateCheck = validateDate(transactionData.date);
+    if (!dateCheck.isValid) {
+        errors.date = dateCheck.message;
     }
-    cleanedData.date = dateValidation.cleaned;
+    cleanData.date = dateCheck.cleaned;
     
-    // Advanced validation: Duplicate words
-    var duplicateValidation = validateNoDuplicateWords(transactionData.description);
-    if (!duplicateValidation.isValid) {
-        errors.duplicateWords = duplicateValidation.message;
+    // Advanced validations (warnings only)
+    var duplicateCheck = checkForDuplicateWords(transactionData.description);
+    if (!duplicateCheck.isValid) {
+        errors.duplicateWords = duplicateCheck.message;
     }
     
-    // Advanced validation: Money pattern
-    var moneyValidation = validateMoneyPattern(transactionData.amount);
-    if (moneyValidation.message) {
-        errors.moneyPattern = moneyValidation.message;
+    var moneyCheck = checkMoneyFormat(transactionData.amount);
+    if (moneyCheck.message) {
+        errors.moneyFormat = moneyCheck.message;
     }
     
     var hasCriticalErrors = false;
     for (var key in errors) {
-        if (errors.hasOwnProperty(key) && key !== 'duplicateWords' && key !== 'moneyPattern') {
+        if (errors.hasOwnProperty(key) && key !== 'duplicateWords' && key !== 'moneyFormat') {
             hasCriticalErrors = true;
             break;
         }
@@ -151,16 +154,16 @@ function validateTransaction(transactionData) {
     return {
         isValid: !hasCriticalErrors,
         errors: errors,
-        cleanedData: cleanedData
+        cleanData: cleanData
     };
 }
 
-// Real-time form field validation
-function validateField(fieldName, value) {
+// Real-time field validation
+function validateInputField(fieldName, value) {
     switch (fieldName) {
         case 'description':
             var descResult = validateDescription(value);
-            var duplicateResult = validateNoDuplicateWords(value);
+            var duplicateResult = checkForDuplicateWords(value);
             return {
                 isValid: descResult.isValid,
                 message: descResult.message || duplicateResult.message,
@@ -169,7 +172,7 @@ function validateField(fieldName, value) {
             
         case 'amount':
             var amountResult = validateAmount(value);
-            var moneyResult = validateMoneyPattern(value);
+            var moneyResult = checkMoneyFormat(value);
             return {
                 isValid: amountResult.isValid,
                 message: amountResult.message || moneyResult.message,
@@ -188,7 +191,7 @@ function validateField(fieldName, value) {
 }
 
 // JSON import validation
-function validateImportedData(jsonData) {
+function validateImportedJSON(jsonData) {
     try {
         var data = typeof jsonData === 'string' ? JSON.parse(jsonData) : jsonData;
         
@@ -196,26 +199,24 @@ function validateImportedData(jsonData) {
             return { isValid: false, error: 'Invalid data format' };
         }
         
-        // Validate transactions array
         if (data.transactions && !Array.isArray(data.transactions)) {
             return { isValid: false, error: 'Transactions must be an array' };
         }
         
-        // Validate each transaction
         if (data.transactions) {
             for (var i = 0; i < data.transactions.length; i++) {
-                var transaction = data.transactions[i];
-                var validation = validateTransaction(transaction);
+                var item = data.transactions[i];
+                var validation = validateCompleteTransaction(item);
                 if (!validation.isValid) {
-                    var errorMessages = [];
+                    var errorList = [];
                     for (var key in validation.errors) {
                         if (validation.errors.hasOwnProperty(key)) {
-                            errorMessages.push(validation.errors[key]);
+                            errorList.push(validation.errors[key]);
                         }
                     }
                     return { 
                         isValid: false, 
-                        error: 'Transaction ' + (i + 1) + ' is invalid: ' + errorMessages.join(', ') 
+                        error: 'Item ' + (i + 1) + ' is invalid: ' + errorList.join(', ') 
                     };
                 }
             }
@@ -224,41 +225,41 @@ function validateImportedData(jsonData) {
         return { isValid: true, data: data };
         
     } catch (error) {
-        return { isValid: false, error: 'Invalid JSON format' };
+        return { isValid: false, error: 'Invalid JSON data' };
     }
 }
 
 // Search pattern validation
 function validateSearchPattern(pattern) {
     if (!pattern.trim()) {
-        return { isValid: true, regex: null };
+        return { isValid: true, pattern: null };
     }
     
-    var regex = compileRegex(pattern, 'i');
+    var compiled = compileSearchPattern(pattern, 'i');
     return {
-        isValid: regex !== null,
-        regex: regex,
-        message: regex ? '' : 'Invalid search pattern'
+        isValid: compiled !== null,
+        pattern: compiled,
+        message: compiled ? '' : 'Invalid search pattern'
     };
 }
 
 // Initialize validators
-function initializeValidators() {
-    console.log('Validators module initialized');
+function initializeInputValidators() {
+    console.log('Input validation system initialized');
 }
 
 // Make validators available globally
 window.validators = {
-    compileRegex: compileRegex,
+    compileSearchPattern: compileSearchPattern,
     validateDescription: validateDescription,
     validateAmount: validateAmount,
     validateDate: validateDate,
     validateCategory: validateCategory,
-    validateNoDuplicateWords: validateNoDuplicateWords,
-    validateMoneyPattern: validateMoneyPattern,
-    validateTransaction: validateTransaction,
-    validateField: validateField,
-    validateImportedData: validateImportedData,
+    checkForDuplicateWords: checkForDuplicateWords,
+    checkMoneyFormat: checkMoneyFormat,
+    validateCompleteTransaction: validateCompleteTransaction,
+    validateInputField: validateInputField,
+    validateImportedJSON: validateImportedJSON,
     validateSearchPattern: validateSearchPattern,
-    initializeValidators: initializeValidators
+    initializeInputValidators: initializeInputValidators
 };

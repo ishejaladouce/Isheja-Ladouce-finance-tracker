@@ -1,296 +1,365 @@
-// scripts/storage.js - Data Persistence & Management
+// scripts/storage.js - Complete Storage with Auto-Load Samples
 
 // Storage keys
-const STORAGE_KEY = 'studentFinanceData';
-const SETTINGS_KEY = 'financeSettings';
+var DATA_STORAGE_KEY = 'moneyTrackerData';
+var USER_SETTINGS_KEY = 'userPreferences';
 
 // Default data structure
-const defaultData = {
+var defaultData = {
     transactions: [],
     settings: {
-        budgetCap: 0,
-        baseCurrency: 'USD',
+        spendingLimit: 0,
+        mainCurrency: 'USD',
         categories: ['Food', 'Books', 'Transport', 'Entertainment', 'Fees', 'Other']
     }
 };
 
-// Load all data from localStorage
-function loadData() {
+// Default user preferences
+var defaultPreferences = {
+    colorTheme: 'default',
+    textSize: 'medium',
+    dateStyle: 'yyyy-mm-dd',
+    moneyStyle: 'symbol',
+    autoSave: true,
+    showGraphs: true,
+    askBeforeDelete: true
+};
+
+// Load all data from storage
+function loadAllData() {
     try {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) {
-            const data = JSON.parse(stored);
-            // Validate and merge with defaults
+        var storedData = localStorage.getItem(DATA_STORAGE_KEY);
+        if (storedData) {
+            var data = JSON.parse(storedData);
             return {
                 transactions: data.transactions || [],
-                settings: { ...defaultData.settings, ...data.settings }
+                settings: Object.assign({}, defaultData.settings, data.settings)
             };
         }
     } catch (error) {
-        console.error('❌ Error loading data:', error);
+        console.log('Error loading data:', error);
     }
     
-    // Return default data if nothing stored or error
-    return { ...defaultData };
+    return Object.assign({}, defaultData);
 }
 
-// Save all data to localStorage
-function saveData(data) {
+// Save all data to storage
+function saveAllData(data) {
     try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-        console.log('💾 Data saved successfully');
+        localStorage.setItem(DATA_STORAGE_KEY, JSON.stringify(data));
+        console.log('Data saved successfully');
         return true;
     } catch (error) {
-        console.error('❌ Error saving data:', error);
-        showStatus('Error saving data', 'error');
+        console.log('Error saving data:', error);
+        showMessage('Error saving data', 'error');
         return false;
     }
 }
 
-// Load settings specifically
-function loadSettings() {
+// Load user preferences
+function loadUserPreferences() {
     try {
-        const stored = localStorage.getItem(SETTINGS_KEY);
-        if (stored) {
-            return { ...defaultData.settings, ...JSON.parse(stored) };
+        var storedPrefs = localStorage.getItem(USER_SETTINGS_KEY);
+        if (storedPrefs) {
+            return Object.assign({}, defaultPreferences, JSON.parse(storedPrefs));
         }
     } catch (error) {
-        console.error('❌ Error loading settings:', error);
+        console.log('Error loading preferences:', error);
     }
     
-    return { ...defaultData.settings };
+    return Object.assign({}, defaultPreferences);
 }
 
-// Save settings specifically
-function saveSettings(settings) {
+// Save user preferences
+function saveUserPreferences(preferences) {
     try {
-        localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-        console.log('⚙️ Settings saved successfully');
+        localStorage.setItem(USER_SETTINGS_KEY, JSON.stringify(preferences));
+        console.log('Preferences saved successfully');
         return true;
     } catch (error) {
-        console.error('❌ Error saving settings:', error);
-        showStatus('Error saving settings', 'error');
+        console.log('Error saving preferences:', error);
+        showMessage('Error saving preferences', 'error');
         return false;
     }
+}
+
+// Load sample data from seed.json file
+function loadSampleDataFromFile() {
+    return new Promise(function(resolve, reject) {
+        // Check if we already have data
+        var existingData = loadAllData();
+        if (existingData.transactions.length > 0) {
+            resolve(false);
+            return;
+        }
+
+        // Try to load seed.json
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'seed.json', true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    try {
+                        var sampleData = JSON.parse(xhr.responseText);
+                        if (sampleData && Array.isArray(sampleData)) {
+                            // Save sample data to storage
+                            var data = {
+                                transactions: sampleData,
+                                settings: defaultData.settings
+                            };
+                            saveAllData(data);
+                            console.log('Loaded ' + sampleData.length + ' sample transactions');
+                            resolve(true);
+                        } else {
+                            resolve(false);
+                        }
+                    } catch (error) {
+                        console.log('Error parsing seed.json:', error);
+                        resolve(false);
+                    }
+                } else {
+                    console.log('Could not load seed.json');
+                    resolve(false);
+                }
+            }
+        };
+        xhr.onerror = function() {
+            console.log('Error loading seed.json');
+            resolve(false);
+        };
+        xhr.send();
+    });
 }
 
 // Add a new transaction
-function addTransaction(transaction) {
-    const data = loadData();
+function addNewTransaction(transactionData) {
+    var data = loadAllData();
     
-    // Generate unique ID with timestamp
-    const newTransaction = {
-        ...transaction,
-        id: 'txn_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+    var newTransaction = {
+        id: 'item_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
+        description: transactionData.description,
+        amount: parseFloat(transactionData.amount),
+        category: transactionData.category,
+        date: transactionData.date,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
     };
     
-    data.transactions.unshift(newTransaction); // Add to beginning
-    const success = saveData(data);
+    data.transactions.unshift(newTransaction);
+    var success = saveAllData(data);
     
     if (success) {
-        showStatus('Transaction added successfully!', 'success');
+        showMessage('Item added successfully', 'success');
     }
     
     return success ? newTransaction : null;
 }
 
-// Update an existing transaction
-function updateTransaction(transactionId, updates) {
-    const data = loadData();
-    const transactionIndex = data.transactions.findIndex(t => t.id === transactionId);
+// Update existing transaction
+function updateExistingTransaction(transactionId, updates) {
+    var data = loadAllData();
+    var foundIndex = -1;
     
-    if (transactionIndex !== -1) {
-        data.transactions[transactionIndex] = {
-            ...data.transactions[transactionIndex],
-            ...updates,
-            updatedAt: new Date().toISOString()
-        };
+    for (var i = 0; i < data.transactions.length; i++) {
+        if (data.transactions[i].id === transactionId) {
+            foundIndex = i;
+            break;
+        }
+    }
+    
+    if (foundIndex !== -1) {
+        data.transactions[foundIndex] = Object.assign(
+            {}, 
+            data.transactions[foundIndex], 
+            updates,
+            { updatedAt: new Date().toISOString() }
+        );
         
-        const success = saveData(data);
+        var success = saveAllData(data);
         if (success) {
-            showStatus('Transaction updated successfully!', 'success');
+            showMessage('Item updated successfully', 'success');
         }
         return success;
     }
     
-    showStatus('Transaction not found', 'error');
+    showMessage('Item not found', 'error');
     return false;
 }
 
 // Delete a transaction
 function deleteTransaction(transactionId) {
-    const data = loadData();
-    const initialLength = data.transactions.length;
+    var data = loadAllData();
+    var originalCount = data.transactions.length;
     
-    data.transactions = data.transactions.filter(t => t.id !== transactionId);
+    data.transactions = data.transactions.filter(function(item) {
+        return item.id !== transactionId;
+    });
     
-    if (data.transactions.length < initialLength) {
-        const success = saveData(data);
+    if (data.transactions.length < originalCount) {
+        var success = saveAllData(data);
         if (success) {
-            showStatus('Transaction deleted successfully!', 'success');
+            showMessage('Item deleted successfully', 'success');
         }
         return success;
     }
     
-    showStatus('Transaction not found', 'error');
+    showMessage('Item not found', 'error');
     return false;
 }
 
-// Get all transactions (with optional filtering)
-function getTransactions(filters = {}) {
-    const data = loadData();
-    let transactions = [...data.transactions];
+// Get all transactions
+function getTransactions(filters) {
+    var data = loadAllData();
+    var transactions = data.transactions.slice();
     
-    // Apply filters
-    if (filters.category) {
-        transactions = transactions.filter(t => t.category === filters.category);
-    }
-    
-    if (filters.startDate) {
-        transactions = transactions.filter(t => t.date >= filters.startDate);
-    }
-    
-    if (filters.endDate) {
-        transactions = transactions.filter(t => t.date <= filters.endDate);
+    if (filters) {
+        if (filters.category) {
+            transactions = transactions.filter(function(item) {
+                return item.category === filters.category;
+            });
+        }
+        
+        if (filters.startDate) {
+            transactions = transactions.filter(function(item) {
+                return item.date >= filters.startDate;
+            });
+        }
+        
+        if (filters.endDate) {
+            transactions = transactions.filter(function(item) {
+                return item.date <= filters.endDate;
+            });
+        }
     }
     
     return transactions;
 }
 
-// Export data as JSON string
-function exportData() {
-    const data = loadData();
+// Export data as JSON
+function exportDataAsJSON() {
+    var data = loadAllData();
     return JSON.stringify(data, null, 2);
 }
 
-// Import data from JSON string with validation
-function importData(jsonString) {
+// Import data from JSON
+function importDataFromJSON(jsonString) {
     try {
-        const importedData = JSON.parse(jsonString);
+        var importedData = JSON.parse(jsonString);
         
-        // Basic validation
         if (!importedData || typeof importedData !== 'object') {
             throw new Error('Invalid data format');
         }
         
-        // Ensure we have at least an empty transactions array
-        const validatedData = {
+        var validatedData = {
             transactions: Array.isArray(importedData.transactions) ? importedData.transactions : [],
-            settings: { ...defaultData.settings, ...importedData.settings }
+            settings: Object.assign({}, defaultData.settings, importedData.settings)
         };
         
-        // Validate each transaction
-        validatedData.transactions = validatedData.transactions.filter(transaction => 
-            transaction && 
-            transaction.id && 
-            transaction.description && 
-            transaction.amount != null
-        );
+        validatedData.transactions = validatedData.transactions.filter(function(transaction) {
+            return transaction && transaction.id && transaction.description && transaction.amount != null;
+        });
         
-        const success = saveData(validatedData);
+        var success = saveAllData(validatedData);
         if (success) {
-            showStatus('Data imported successfully!', 'success');
+            showMessage('Data imported successfully', 'success');
             return true;
         }
         
     } catch (error) {
-        console.error('❌ Error importing data:', error);
-        showStatus('Invalid JSON data format', 'error');
+        console.log('Error importing data:', error);
+        showMessage('Invalid data format', 'error');
     }
     
     return false;
 }
 
-// Reset all data to defaults
-function resetData() {
+// Reset all data
+function resetAllData() {
     if (confirm('Are you sure you want to reset all data? This cannot be undone.')) {
-        localStorage.removeItem(STORAGE_KEY);
-        localStorage.removeItem(SETTINGS_KEY);
-        showStatus('All data has been reset', 'success');
+        localStorage.removeItem(DATA_STORAGE_KEY);
+        localStorage.removeItem(USER_SETTINGS_KEY);
+        showMessage('All data has been reset', 'success');
         return true;
     }
     return false;
 }
 
-// Get statistics
-function getStats() {
-    const transactions = getTransactions();
-    const settings = loadSettings();
+// Calculate statistics
+function calculateStatistics() {
+    var transactions = getTransactions();
+    var settings = loadAllData().settings;
     
-    const totalAmount = transactions.reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
+    var totalSpent = transactions.reduce(function(sum, item) {
+        return sum + parseFloat(item.amount || 0);
+    }, 0);
     
-    // Get category totals
-    const categoryTotals = {};
-    transactions.forEach(t => {
-        categoryTotals[t.category] = (categoryTotals[t.category] || 0) + parseFloat(t.amount || 0);
+    var categoryTotals = {};
+    transactions.forEach(function(item) {
+        categoryTotals[item.category] = (categoryTotals[item.category] || 0) + parseFloat(item.amount || 0);
     });
     
-    // Find top category
-    let topCategory = 'None';
-    let maxAmount = 0;
-    Object.entries(categoryTotals).forEach(([category, amount]) => {
-        if (amount > maxAmount) {
-            maxAmount = amount;
+    var topCategory = 'None';
+    var highestAmount = 0;
+    for (var category in categoryTotals) {
+        if (categoryTotals[category] > highestAmount) {
+            highestAmount = categoryTotals[category];
             topCategory = category;
         }
-    });
+    }
     
-    // Check budget cap
-    const budgetStatus = settings.budgetCap > 0 ? {
-        remaining: settings.budgetCap - totalAmount,
-        isOver: totalAmount > settings.budgetCap
-    } : null;
+    var limitStatus = null;
+    if (settings.spendingLimit > 0) {
+        limitStatus = {
+            remaining: settings.spendingLimit - totalSpent,
+            isOver: totalSpent > settings.spendingLimit
+        };
+    }
     
     return {
-        totalTransactions: transactions.length,
-        totalAmount: totalAmount,
+        totalItems: transactions.length,
+        totalSpent: totalSpent,
         topCategory: topCategory,
-        budgetStatus: budgetStatus,
+        limitStatus: limitStatus,
         categoryTotals: categoryTotals
     };
 }
 
 // Show status message
-function showStatus(message, type = 'info') {
-    const statusElement = document.getElementById('status-message');
-    if (statusElement) {
-        statusElement.textContent = message;
-        statusElement.className = `status-message ${type}`;
+function showMessage(message, type) {
+    var messageElement = document.getElementById('status-message');
+    if (messageElement) {
+        messageElement.textContent = message;
+        messageElement.className = 'status-message ' + type;
         
-        // Auto-hide after 3 seconds
-        setTimeout(() => {
-            statusElement.textContent = '';
-            statusElement.className = 'status-message';
+        setTimeout(function() {
+            messageElement.textContent = '';
+            messageElement.className = 'status-message';
         }, 3000);
     }
     
-    // Also log to console
-    console.log(`📢 ${type.toUpperCase()}: ${message}`);
+    console.log(type.toUpperCase() + ': ' + message);
 }
 
-// Initialize storage module
-function initializeStorage() {
-    console.log('💾 Storage module initialized');
-    
-    // Load initial data to ensure structure exists
-    loadData();
+// Initialize storage system
+function initializeStorageSystem() {
+    console.log('Storage system initialized');
+    loadAllData(); // Ensure structure exists
 }
 
 // Make functions available globally
 window.storage = {
-    loadData,
-    saveData,
-    loadSettings,
-    saveSettings,
-    addTransaction,
-    updateTransaction,
-    deleteTransaction,
-    getTransactions,
-    exportData,
-    importData,
-    resetData,
-    getStats,
-    initializeStorage
+    loadAllData: loadAllData,
+    saveAllData: saveAllData,
+    loadUserPreferences: loadUserPreferences,
+    saveUserPreferences: saveUserPreferences,
+    loadSampleDataFromFile: loadSampleDataFromFile,
+    addNewTransaction: addNewTransaction,
+    updateExistingTransaction: updateExistingTransaction,
+    deleteTransaction: deleteTransaction,
+    getTransactions: getTransactions,
+    exportDataAsJSON: exportDataAsJSON,
+    importDataFromJSON: importDataFromJSON,
+    resetAllData: resetAllData,
+    calculateStatistics: calculateStatistics,
+    initializeStorageSystem: initializeStorageSystem
 };

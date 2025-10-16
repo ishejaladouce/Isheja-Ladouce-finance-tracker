@@ -1,289 +1,408 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Money Tracker</title>
-  <link rel="stylesheet" href="./styles/style.css" />
-</head>
-<body>
-  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Money Tracker</title>
+    <link rel="stylesheet" href="./styles/style.css" />
+  </head>
+  <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
 
-  <header role="banner">
-    <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
-    <h1><strong>S</strong> Finance Tracker</h1>
-  </header>
+    <header role="banner">
+      <button
+        class="menu-toggle"
+        aria-label="Toggle navigation"
+        aria-expanded="false"
+      >
+        ☰
+      </button>
+      <h1><strong>S</strong> Finance Tracker</h1>
+    </header>
 
-  <div id="status-message" class="status-message" aria-live="polite" aria-atomic="true"></div>
+    <div
+      id="status-message"
+      class="status-message"
+      aria-live="polite"
+      aria-atomic="true"
+    ></div>
 
-  <div class="app-layout">
-    <aside class="side-menu" aria-label="Main navigation">
-      <nav>
-        <ul>
-          <li><a href="#about-section" class="menu-link" data-section="about">About This App</a></li>
-          <li><a href="#dashboard" class="menu-link" data-section="dashboard">My Dashboard</a></li>
-          <li><a href="#records" class="menu-link" data-section="records">All Transactions</a></li>
-          <li><a href="#form-section" class="menu-link" data-section="form">Add New Item</a></li>
-          <li><a href="#settings-section" class="menu-link" data-section="settings">My Settings</a></li>
-        </ul>
-      </nav>
-    </aside>
+    <div class="app-layout">
+      <aside class="side-menu" aria-label="Main navigation">
+        <nav>
+          <ul>
+            <li>
+              <a href="#about-section" class="menu-link" data-section="about"
+                >About This App</a
+              >
+            </li>
+            <li>
+              <a href="#dashboard" class="menu-link" data-section="dashboard"
+                >My Dashboard</a
+              >
+            </li>
+            <li>
+              <a href="#records" class="menu-link" data-section="records"
+                >All Transactions</a
+              >
+            </li>
+            <li>
+              <a href="#form-section" class="menu-link" data-section="form"
+                >Add New Item</a
+              >
+            </li>
+            <li>
+              <a
+                href="#settings-section"
+                class="menu-link"
+                data-section="settings"
+                >My Settings</a
+              >
+            </li>
+          </ul>
+        </nav>
+      </aside>
 
-    <main id="main-content" role="main" class="main-content-area">
-      
-      <!-- About Section -->
-      <section id="about-section" class="content-panel active">
-        <h2>About This Money Tracker</h2>
-        <p>
-          This app was created by <strong>ISHEJA Ladouce</strong>
-          to help students manage their money and track spending easily.
-        </p>
-        <p>
-          Get in touch:
-          <a href="mailto:l.isheja@alustudent.com">l.isheja@alustudent.com</a> |
-          <a href="https://github.com/ishejaladouce" target="_blank" rel="noopener">My GitHub</a>
-        </p>
-      </section>
+      <main id="main-content" role="main" class="main-content-area">
+        <!-- About Section -->
+        <section id="about-section" class="content-panel active">
+          <h2>About This Money Tracker</h2>
+          <p>
+            This app was created by <strong>ISHEJA Ladouce</strong>
+            to help students manage their money and track spending easily.
+          </p>
+          <p>
+            Get in touch:
+            <a href="mailto:l.isheja@alustudent.com">l.isheja@alustudent.com</a>
+            |
+            <a
+              href="https://github.com/ishejaladouce"
+              target="_blank"
+              rel="noopener"
+              >My GitHub</a
+            >
+          </p>
+        </section>
 
-      <!-- Dashboard Section -->
-      <section id="dashboard" class="content-panel">
-        <h2>My Spending Overview</h2>
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="content-panel">
+          <h2>My Spending Overview</h2>
 
-        <div class="summary-cards">
-          <div class="summary-card total-spent" aria-label="Total amount spent">
-            <h3>Total Spent</h3>
-            <p id="total-amount">$0.00</p>
+          <div class="summary-cards">
+            <div
+              class="summary-card total-spent"
+              aria-label="Total amount spent"
+            >
+              <h3>Total Spent</h3>
+              <p id="total-amount">$0.00</p>
+            </div>
+
+            <div
+              class="summary-card top-category"
+              aria-label="Top spending category"
+            >
+              <h3>Most Spent On</h3>
+              <p id="top-category">Nothing yet</p>
+            </div>
+
+            <div class="summary-card budget-status" aria-label="Budget status">
+              <h3>Budget Status</h3>
+              <p id="budget-status">No limit set</p>
+            </div>
           </div>
 
-          <div class="summary-card top-category" aria-label="Top spending category">
-            <h3>Most Spent On</h3>
-            <p id="top-category">Nothing yet</p>
+          <div
+            class="spending-chart"
+            aria-label="Spending trend for last 7 days"
+          >
+            <h3>Last Week's Spending</h3>
+            <div id="chart-area" class="chart-area">
+              <!-- Chart will appear here -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Records Section -->
+        <section id="records" class="content-panel">
+          <h2>All My Transactions</h2>
+
+          <!-- Search box -->
+          <div class="search-box">
+            <label for="search-input">Find Transactions:</label>
+            <input
+              type="text"
+              id="search-input"
+              placeholder="Search by name, category, or amount"
+            />
+            <button id="clear-search" type="button">Clear Search</button>
           </div>
 
-          <div class="summary-card budget-status" aria-label="Budget status">
-            <h3>Budget Status</h3>
-            <p id="budget-status">No limit set</p>
-          </div>
-        </div>
-        
-        <div class="spending-chart" aria-label="Spending trend for last 7 days">
-          <h3>Last Week's Spending</h3>
-          <div id="chart-area" class="chart-area">
-            <!-- Chart will appear here -->
-          </div>
-        </div>
-      </section>
-
-      <!-- Records Section -->
-      <section id="records" class="content-panel">
-        <h2>All My Transactions</h2>
-
-        <!-- Search box -->
-        <div class="search-box">
-          <label for="search-input">Find Transactions:</label>
-          <input type="text" id="search-input" placeholder="Search by name, category, or amount" />
-          <button id="clear-search" type="button">Clear Search</button>
-        </div>
-
-        <!-- Sort options -->
-        <div class="sort-options">
-          <label for="sort-select">Arrange by:</label>
-          <select id="sort-select">
-            <option value="date-desc">Date (Newest First)</option>
-            <option value="date-asc">Date (Oldest First)</option>
-            <option value="amount-desc">Amount (High to Low)</option>
-            <option value="amount-asc">Amount (Low to High)</option>
-            <option value="description-asc">Name (A to Z)</option>
-            <option value="description-desc">Name (Z to A)</option>
-          </select>
-        </div>
-
-        <div class="table-wrapper">
-          <table class="transactions-table" aria-label="My transaction records">
-            <thead>
-              <tr>
-                <th>Item Name</th>
-                <th>Cost</th>
-                <th>Category</th>
-                <th>Date</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="records-body">
-              <tr id="empty-message">
-                <td colspan="5" class="no-data">No transactions yet. Add your first item above!</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="mobile-cards" id="records-cards" aria-label="Transaction cards for mobile view">
-          <!-- Mobile cards will appear here -->
-        </div>
-      </section>
-
-      <!-- Add/Edit Form Section -->
-      <section id="form-section" class="content-panel form-panel">
-        <h2>Add or Edit Item</h2>
-        <form id="money-form" novalidate>
-          <div class="input-group">
-            <label for="description">What did you spend on?</label>
-            <input type="text" id="description" name="description" placeholder="Lunch, books, transport..." required />
-            <small class="help-text" aria-live="polite"></small>
-          </div>
-
-          <div class="input-group">
-            <label for="amount">How much did it cost? ($)</label>
-            <input type="number" id="amount" name="amount" placeholder="0.00" step="0.01" required />
-            <small class="help-text" aria-live="polite"></small>
-          </div>
-
-          <div class="input-group">
-            <label for="category">What type of spending?</label>
-            <select id="category" name="category" required>
-              <option value="">Choose a category</option>
-              <option value="Food">Food & Drinks</option>
-              <option value="Books">Books & Supplies</option>
-              <option value="Transport">Transport</option>
-              <option value="Entertainment">Entertainment</option>
-              <option value="Fees">Fees & Bills</option>
-              <option value="Other">Other Items</option>
-            </select>
-            <small class="help-text" aria-live="polite"></small>
-          </div>
-
-          <div class="input-group">
-            <label for="date">When did you spend this?</label>
-            <input type="date" id="date" name="date" required />
-            <small class="help-text" aria-live="polite"></small>
-          </div>
-
-          <input type="hidden" id="editing-id" name="editing-id" />
-
-          <div class="form-buttons">
-            <button type="submit" id="submit-btn">Save This Item</button>
-            <button type="button" id="cancel-edit" style="display: none;">Cancel Editing</button>
-          </div>
-        </form>
-      </section>
-
-      <!-- Settings Section -->
-      <section id="settings-section" class="content-panel settings-panel">
-        <h2>My Preferences & Settings</h2>
-        
-        <div class="settings-group">
-          <h3>Money Settings</h3>
-          <div class="input-group">
-            <label for="spending-limit">Monthly Spending Limit ($)</label>
-            <input type="number" id="spending-limit" name="spending-limit" placeholder="0.00" step="0.01" />
-            <small class="info-text">Set a maximum monthly spending limit</small>
-          </div>
-
-          <div class="input-group">
-            <label for="main-currency">Main Currency</label>
-            <select id="main-currency" name="main-currency">
-              <option value="USD" selected>USD - US Dollar</option>
-              <option value="EUR">EUR - Euro</option>
-              <option value="GBP">GBP - British Pound</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="settings-group">
-          <h3>App Appearance</h3>
-          <div class="input-group">
-            <label for="color-theme">Color Theme</label>
-            <select id="color-theme" name="color-theme">
-              <option value="default">Default Blue</option>
-              <option value="green">Green Nature</option>
-              <option value="purple">Purple Royal</option>
-              <option value="dark">Dark Mode</option>
+          <!-- Sort options -->
+          <div class="sort-options">
+            <label for="sort-select">Arrange by:</label>
+            <select id="sort-select">
+              <option value="date-desc">Date (Newest First)</option>
+              <option value="date-asc">Date (Oldest First)</option>
+              <option value="amount-desc">Amount (High to Low)</option>
+              <option value="amount-asc">Amount (Low to High)</option>
+              <option value="description-asc">Name (A to Z)</option>
+              <option value="description-desc">Name (Z to A)</option>
             </select>
           </div>
 
-          <div class="input-group">
-            <label for="text-size">Text Size</label>
-            <select id="text-size" name="text-size">
-              <option value="small">Small</option>
-              <option value="medium" selected>Medium</option>
-              <option value="large">Large</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="settings-group">
-          <h3>Display Options</h3>
-          <div class="input-group">
-            <label for="date-style">Date Display</label>
-            <select id="date-style" name="date-style">
-              <option value="yyyy-mm-dd">YYYY-MM-DD (2024-01-15)</option>
-              <option value="mm/dd/yyyy">MM/DD/YYYY (01/15/2024)</option>
-              <option value="dd-mm-yyyy">DD-MM-YYYY (15-01-2024)</option>
-            </select>
-          </div>
-
-          <div class="input-group">
-            <label for="money-style">Money Display</label>
-            <select id="money-style" name="money-style">
-              <option value="symbol">With Symbol ($10.50)</option>
-              <option value="code">With Code (USD 10.50)</option>
-              <option value="plain">Plain Number (10.50)</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="settings-group">
-          <h3>App Behavior</h3>
-          <div class="checkbox-group">
-            <label>
-              <input type="checkbox" id="auto-save" name="auto-save" checked>
-              Save changes automatically
-            </label>
+          <div class="table-wrapper">
+            <table
+              class="transactions-table"
+              aria-label="My transaction records"
+            >
+              <thead>
+                <tr>
+                  <th>Item Name</th>
+                  <th>Cost</th>
+                  <th>Category</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="records-body">
+                <tr id="empty-message">
+                  <td colspan="5" class="no-data">
+                    No transactions yet. Add your first item above!
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
-          <div class="checkbox-group">
-            <label>
-              <input type="checkbox" id="show-graphs" name="show-graphs" checked>
-              Show spending graphs
-            </label>
+          <div
+            class="mobile-cards"
+            id="records-cards"
+            aria-label="Transaction cards for mobile view"
+          >
+            <!-- Mobile cards will appear here -->
+          </div>
+        </section>
+
+        <!-- Add/Edit Form Section -->
+        <section id="form-section" class="content-panel form-panel">
+          <h2>Add or Edit Item</h2>
+          <form id="money-form" novalidate>
+            <div class="input-group">
+              <label for="description">What did you spend on?</label>
+              <input
+                type="text"
+                id="description"
+                name="description"
+                placeholder="Lunch, books, transport..."
+                required
+              />
+              <small class="help-text" aria-live="polite"></small>
+            </div>
+
+            <div class="input-group">
+              <label for="amount">How much did it cost? ($)</label>
+              <input
+                type="number"
+                id="amount"
+                name="amount"
+                placeholder="0.00"
+                step="0.01"
+                required
+              />
+              <small class="help-text" aria-live="polite"></small>
+            </div>
+
+            <div class="input-group">
+              <label for="category">What type of spending?</label>
+              <select id="category" name="category" required>
+                <option value="">Choose a category</option>
+                <option value="Food">Food & Drinks</option>
+                <option value="Books">Books & Supplies</option>
+                <option value="Transport">Transport</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Fees">Fees & Bills</option>
+                <option value="Other">Other Items</option>
+              </select>
+              <small class="help-text" aria-live="polite"></small>
+            </div>
+
+            <div class="input-group">
+              <label for="date">When did you spend this?</label>
+              <input type="date" id="date" name="date" required />
+              <small class="help-text" aria-live="polite"></small>
+            </div>
+
+            <input type="hidden" id="editing-id" name="editing-id" />
+
+            <div class="form-buttons">
+              <button type="submit" id="submit-btn">Save This Item</button>
+              <button type="button" id="cancel-edit" style="display: none">
+                Cancel Editing
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <!-- Settings Section -->
+        <section id="settings-section" class="content-panel settings-panel">
+          <h2>My Preferences & Settings</h2>
+
+          <div class="settings-group">
+            <h3>Money Settings</h3>
+            <div class="input-group">
+              <label for="spending-limit">Monthly Spending Limit ($)</label>
+              <input
+                type="number"
+                id="spending-limit"
+                name="spending-limit"
+                placeholder="0.00"
+                step="0.01"
+              />
+              <small class="info-text"
+                >Set a maximum monthly spending limit</small
+              >
+            </div>
+
+            <div class="input-group">
+              <label for="main-currency">Main Currency</label>
+              <select id="main-currency" name="main-currency">
+                <option value="USD" selected>USD - US Dollar</option>
+                <option value="EUR">EUR - Euro</option>
+                <option value="GBP">GBP - British Pound</option>
+              </select>
+            </div>
           </div>
 
-          <div class="checkbox-group">
-            <label>
-              <input type="checkbox" id="ask-before-delete" name="ask-before-delete" checked>
-              Ask before deleting items
-            </label>
+          <div class="settings-group">
+            <h3>App Appearance</h3>
+            <div class="input-group">
+              <label for="color-theme">Color Theme</label>
+              <select id="color-theme" name="color-theme">
+                <option value="default">Default Blue</option>
+                <option value="green">Green Nature</option>
+                <option value="purple">Purple Royal</option>
+                <option value="dark">Dark Mode</option>
+              </select>
+            </div>
+
+            <div class="input-group">
+              <label for="text-size">Text Size</label>
+              <select id="text-size" name="text-size">
+                <option value="small">Small</option>
+                <option value="medium" selected>Medium</option>
+                <option value="large">Large</option>
+              </select>
+            </div>
           </div>
-        </div>
 
-        <div class="settings-group">
-          <h3>Data Management</h3>
-          <div class="input-group">
-            <label for="import-data">Import My Data</label>
-            <textarea id="import-data" placeholder="Paste your saved data here..."></textarea>
-            <button type="button" id="import-btn">Import Data</button>
-            <small class="info-text">Bring back your previously saved information</small>
+          <div class="settings-group">
+            <h3>Display Options</h3>
+            <div class="input-group">
+              <label for="date-style">Date Display</label>
+              <select id="date-style" name="date-style">
+                <option value="yyyy-mm-dd">YYYY-MM-DD (2024-01-15)</option>
+                <option value="mm/dd/yyyy">MM/DD/YYYY (01/15/2024)</option>
+                <option value="dd-mm-yyyy">DD-MM-YYYY (15-01-2024)</option>
+              </select>
+            </div>
+
+            <div class="input-group">
+              <label for="money-style">Money Display</label>
+              <select id="money-style" name="money-style">
+                <option value="symbol">With Symbol ($10.50)</option>
+                <option value="code">With Code (USD 10.50)</option>
+                <option value="plain">Plain Number (10.50)</option>
+              </select>
+            </div>
           </div>
 
-          <div class="form-buttons">
-            <button type="button" id="export-btn">Export My Data</button>
-            <button type="button" id="save-settings-btn">Save All Settings</button>
-            <button type="button" id="reset-data-btn" class="warning-btn">Clear All Data</button>
+          <div class="settings-group">
+            <h3>App Behavior</h3>
+            <div class="checkbox-group">
+              <label>
+                <input
+                  type="checkbox"
+                  id="auto-save"
+                  name="auto-save"
+                  checked
+                />
+                Save changes automatically
+              </label>
+            </div>
+
+            <div class="checkbox-group">
+              <label>
+                <input
+                  type="checkbox"
+                  id="show-graphs"
+                  name="show-graphs"
+                  checked
+                />
+                Show spending graphs
+              </label>
+            </div>
+
+            <div class="checkbox-group">
+              <label>
+                <input
+                  type="checkbox"
+                  id="ask-before-delete"
+                  name="ask-before-delete"
+                  checked
+                />
+                Ask before deleting items
+              </label>
+            </div>
           </div>
-        </div>
-      </section>
-    </main>
-  </div>
 
-  <footer role="contentinfo">
-    <p>&copy; 2025 Ladouce Isheja | Student Finance Tracker</p>
-    <p>
-      Contact:
-      <a href="mailto:l.isheja@alustudent.com">l.isheja@alustudent.com</a> |
-      <a href="https://github.com/ishejaladouce" target="_blank" rel="noopener">GitHub</a>
-    </p>
-  </footer>
+          <div class="settings-group">
+            <h3>Data Management</h3>
+            <div class="input-group">
+              <label for="import-data">Import My Data</label>
+              <textarea
+                id="import-data"
+                placeholder="Paste your saved data here..."
+              ></textarea>
+              <button type="button" id="import-btn">Import Data</button>
+              <small class="info-text"
+                >Bring back your previously saved information</small
+              >
+            </div>
 
-  <script src="./scripts/main.js"></script>
-</body>
+            <div class="form-buttons">
+              <button type="button" id="export-btn">Export My Data</button>
+              <button type="button" id="save-settings-btn">
+                Save All Settings
+              </button>
+              <button type="button" id="reset-data-btn" class="warning-btn">
+                Clear All Data
+              </button>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer role="contentinfo">
+      <p>&copy; 2025 Ladouce Isheja | Student Finance Tracker</p>
+      <p>
+        Contact:
+        <a href="mailto:l.isheja@alustudent.com">l.isheja@alustudent.com</a> |
+        <a
+          href="https://github.com/ishejaladouce"
+          target="_blank"
+          rel="noopener"
+          >GitHub</a
+        >
+      </p>
+    </footer>
+
+    <script src="./scripts/main.js"></script>
+    <script src="./scripts/storage.js"></script>
+    <script src="./scripts/state.js"></script>
+    <script src="./scripts/validators.js"></script>
+    <script src="./scripts/search.js"></script>
+    <script src="./scripts/ui.js"></script>
+    <script src="./scripts/main.js"></script>
+  </body>
 </html>

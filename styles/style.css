@@ -37,7 +37,7 @@ header {
   display: none;
 }
 
-/* Hamburger Menu - STANDALONE FLOATING BUTTON */
+/* Hamburger Menu - FIXED FOR MOBILE */
 .menu-toggle {
   position: fixed;
   top: 20px;
@@ -935,19 +935,27 @@ body.font-large {
   font-size: 18px;
 }
 
-/* Responsive Design */
+/* ===== RESPONSIVE DESIGN - FIXED ===== */
 
-/* Mobile (default) */
+/* Mobile (default) - HAMBURGER ALWAYS VISIBLE */
+.menu-toggle {
+  display: flex !important; /* Force show on mobile */
+}
+
+.side-menu {
+  left: -280px; /* Hidden by default on mobile */
+}
+
+.side-menu.active {
+  left: 0; /* Show when active */
+}
+
 .summary-cards {
   grid-template-columns: 1fr;
 }
 
 .mobile-cards {
   display: none;
-}
-
-.menu-toggle {
-  display: block;
 }
 
 /* Tablet */
@@ -964,17 +972,32 @@ body.font-large {
   .sort-options {
     flex-wrap: nowrap;
   }
+  
+  /* Hamburger still visible on tablet */
+  .menu-toggle {
+    display: flex !important;
+  }
+  
+  .side-menu {
+    left: -280px;
+  }
+  
+  .side-menu.active {
+    left: 0;
+  }
 }
 
 /* Desktop */
 @media (min-width: 1024px) {
+  /* Hide hamburger on desktop */
   .menu-toggle {
-    display: none;
+    display: none !important;
   }
   
+  /* Side menu always visible on desktop */
   .side-menu {
     position: fixed;
-    left: 0;
+    left: 0 !important;
     top: 0;
     height: 100vh;
   }
@@ -1021,6 +1044,7 @@ body.font-large {
   
   .main-content-area {
     padding: 1rem;
+    margin-left: 0 !important; /* Ensure no margin on mobile */
   }
   
   .form-panel,

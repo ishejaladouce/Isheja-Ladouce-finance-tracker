@@ -1,4 +1,4 @@
-// scripts/main.js - WORKING Hamburger Menu
+// scripts/main.js - COMPLETE FILE
 
 // Initialize the entire application
 function startApplication() {
@@ -50,8 +50,11 @@ function continueAppStartup() {
     // Set up navigation
     setupPageNavigation();
     
-    // ADD THIS LINE - Set up theme and preferences
+    // Set up theme and preferences
     setupThemeAndPreferences();
+    
+    // Initialize spending limit
+    initializeSpendingLimit();
     
     loadStartingData();
     
@@ -111,6 +114,193 @@ function setupHamburgerMenu() {
     }
 }
 
+// ===== SPENDING LIMIT FUNCTIONALITY =====
+function initializeSpendingLimit() {
+    console.log('Initializing spending limit...');
+    loadSpendingLimit();
+    setupSpendingLimitListeners();
+}
+
+function loadSpendingLimit() {
+    const spendingLimitInput = document.getElementById('spending-limit');
+    
+    if (spendingLimitInput) {
+        let savedLimit = 0;
+        
+        // Try to get from storage system first
+        if (window.storage && window.storage.loadAllData) {
+            const data = window.storage.loadAllData();
+            savedLimit = parseFloat(data.settings.spendingLimit) || 0;
+            console.log('Loaded spending limit from storage system:', savedLimit);
+        } else {
+            // Fallback to localStorage
+            savedLimit = parseFloat(localStorage.getItem('moneyTracker-spendingLimit')) || 0;
+            console.log('Loaded spending limit from localStorage:', savedLimit);
+        }
+        
+        if (savedLimit > 0) {
+            spendingLimitInput.value = savedLimit.toFixed(2);
+        }
+    }
+}
+
+function setupSpendingLimitListeners() {
+    const spendingLimitInput = document.getElementById('spending-limit');
+    const saveSettingsBtn = document.getElementById('save-settings-btn');
+    
+    if (spendingLimitInput) {
+        spendingLimitInput.addEventListener('change', function() {
+            saveSpendingLimit();
+        });
+        
+        spendingLimitInput.addEventListener('blur', function() {
+            if (this.value) {
+                saveSpendingLimit();
+            }
+        });
+    }
+    
+    if (saveSettingsBtn) {
+        // Save spending limit when settings are saved
+        const originalOnClick = saveSettingsBtn.onclick;
+        saveSettingsBtn.onclick = function() {
+            saveSpendingLimit();
+            if (originalOnClick) {
+                originalOnClick();
+            }
+        };
+    }
+}
+
+function saveSpendingLimit() {
+    const spendingLimitInput = document.getElementById('spending-limit');
+    if (spendingLimitInput && spendingLimitInput.value) {
+        const limit = parseFloat(spendingLimitInput.value);
+        if (!isNaN(limit) && limit > 0) {
+            // Save to localStorage for quick access
+            localStorage.setItem('moneyTracker-spendingLimit', limit);
+            
+            // Also save to storage system
+            if (window.storage && window.storage.loadAllData && window.storage.saveAllData) {
+                const data = window.storage.loadAllData();
+                data.settings.spendingLimit = limit;
+                window.storage.saveAllData(data);
+                console.log('Spending limit saved to storage system:', limit);
+            }
+            
+            updateBudgetDisplay();
+            showStatus('Spending limit saved successfully!', 'success');
+            return true;
+        }
+    }
+    return false;
+}
+
+function calculateCurrentMonthSpending() {
+    try {
+        // Use storage system to get transactions
+        let transactions = [];
+        
+        if (window.storage && window.storage.getTransactions) {
+            transactions = window.storage.getTransactions();
+            console.log('Got transactions from storage system:', transactions.length);
+        } else {
+            // Fallback: try to get from localStorage directly
+            const storedData = localStorage.getItem('moneyTrackerData');
+            if (storedData) {
+                const data = JSON.parse(storedData);
+                transactions = data.transactions || [];
+                console.log('Got transactions from localStorage:', transactions.length);
+            }
+        }
+        
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+        
+        let total = 0;
+        
+        transactions.forEach(transaction => {
+            try {
+                if (transaction.date && transaction.amount) {
+                    const transactionDate = new Date(transaction.date);
+                    
+                    // Check if date is valid and from current month/year
+                    if (!isNaN(transactionDate.getTime()) &&
+                        transactionDate.getMonth() === currentMonth && 
+                        transactionDate.getFullYear() === currentYear) {
+                        
+                        const amount = parseFloat(transaction.amount);
+                        if (!isNaN(amount) && amount > 0) {
+                            total += amount;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.log('Error processing transaction:', transaction, error);
+            }
+        });
+        
+        console.log('Total monthly spending calculated:', total);
+        return total;
+        
+    } catch (error) {
+        console.error('Error calculating monthly spending:', error);
+        return 0;
+    }
+}
+
+function updateBudgetDisplay() {
+    const budgetStatusElement = document.getElementById('budget-status');
+    if (!budgetStatusElement) return;
+    
+    let spendingLimit = 0;
+    
+    // Try to get spending limit from multiple sources
+    if (window.storage && window.storage.loadAllData) {
+        const data = window.storage.loadAllData();
+        spendingLimit = parseFloat(data.settings.spendingLimit) || 0;
+    } else {
+        // Fallback to localStorage
+        spendingLimit = parseFloat(localStorage.getItem('moneyTracker-spendingLimit')) || 0;
+    }
+    
+    console.log('=== BUDGET CALCULATION ===');
+    console.log('Spending limit:', spendingLimit);
+    
+    if (spendingLimit > 0) {
+        const currentMonthTotal = calculateCurrentMonthSpending();
+        const remaining = spendingLimit - currentMonthTotal;
+        const percentage = (currentMonthTotal / spendingLimit) * 100;
+        
+        console.log('Current month total:', currentMonthTotal);
+        console.log('Remaining:', remaining);
+        console.log('Percentage:', percentage);
+        
+        let statusText = '';
+        
+        if (remaining >= 0) {
+            statusText = `$${remaining.toFixed(2)} left (${percentage.toFixed(1)}% used)`;
+            budgetStatusElement.style.color = percentage > 80 ? '#d97706' : '#059669';
+        } else {
+            statusText = `Over budget by $${Math.abs(remaining).toFixed(2)}`;
+            budgetStatusElement.style.color = '#dc2626';
+            budgetStatusElement.style.fontWeight = 'bold';
+        }
+        
+        budgetStatusElement.textContent = statusText;
+    } else {
+        budgetStatusElement.textContent = 'No limit set';
+        budgetStatusElement.style.color = '';
+        budgetStatusElement.style.fontWeight = '';
+    }
+}
+
+// Call this whenever transactions change
+function refreshBudgetStatus() {
+    updateBudgetDisplay();
+}
+
 // ===== THEME AND PREFERENCES FUNCTIONALITY =====
 function setupThemeAndPreferences() {
     console.log('Setting up theme and preferences...');
@@ -121,38 +311,31 @@ function setupThemeAndPreferences() {
     loadSavedPreferences();
 }
 
-// Theme switching functionality
 function setupThemeSwitching() {
     const themeSelector = document.getElementById('color-theme');
     
     if (themeSelector) {
-        // Apply theme when selector changes
         themeSelector.addEventListener('change', function() {
             applyTheme(this.value);
         });
     }
 }
 
-// Font size switching functionality
 function setupFontSizeSwitching() {
     const fontSizeSelector = document.getElementById('text-size');
     
     if (fontSizeSelector) {
-        // Apply when selector changes
         fontSizeSelector.addEventListener('change', function() {
             applyFontSize(this.value);
         });
     }
 }
 
-// Other preferences setup
 function setupOtherPreferences() {
-    // These will be handled by the save button
     const dateStyleSelector = document.getElementById('date-style');
     const moneyStyleSelector = document.getElementById('money-style');
     const currencySelector = document.getElementById('main-currency');
     
-    // Add change listeners if needed
     if (dateStyleSelector) {
         dateStyleSelector.addEventListener('change', function() {
             // You can add real-time date format updates here if needed
@@ -160,7 +343,6 @@ function setupOtherPreferences() {
     }
 }
 
-// Save settings button functionality
 function setupSaveSettingsButton() {
     const saveSettingsBtn = document.getElementById('save-settings-btn');
     
@@ -172,7 +354,6 @@ function setupSaveSettingsButton() {
     }
 }
 
-// Load all saved preferences
 function loadSavedPreferences() {
     // Load and apply theme
     const savedTheme = localStorage.getItem('moneyTracker-theme') || 'default';
@@ -212,7 +393,6 @@ function loadSavedPreferences() {
     });
 }
 
-// Save all preferences to localStorage
 function saveAllPreferences() {
     const themeSelector = document.getElementById('color-theme');
     const fontSizeSelector = document.getElementById('text-size');
@@ -245,7 +425,6 @@ function saveAllPreferences() {
     console.log('All preferences saved to localStorage');
 }
 
-// Apply theme to the document
 function applyTheme(themeName) {
     console.log('Applying theme:', themeName);
     
@@ -258,7 +437,6 @@ function applyTheme(themeName) {
     }
 }
 
-// Apply font size to the document
 function applyFontSize(size) {
     document.body.classList.remove('font-small', 'font-medium', 'font-large');
     document.body.classList.add(`font-${size}`);
@@ -277,7 +455,6 @@ function showStatus(message, type = 'success') {
         }, 3000);
     }
 }
-// ===== END THEME AND PREFERENCES FUNCTIONALITY =====
 
 // Handle navigation between pages
 function setupPageNavigation() {
@@ -293,6 +470,11 @@ function setupPageNavigation() {
             if (targetPage) {
                 const pageName = targetPage.substring(1);
                 showPage(pageName);
+                
+                // Update budget display when showing dashboard
+                if (pageName === 'dashboard') {
+                    updateBudgetDisplay();
+                }
                 
                 // Close mobile menu after click
                 if (window.innerWidth < 1024 && sideMenu && menuToggle) {
@@ -322,6 +504,7 @@ function showPage(pageId) {
 // Load initial data and show dashboard
 function loadStartingData() {
     showPage('dashboard');
+    updateBudgetDisplay(); // Initialize budget display
 }
 
 // Handle page load
@@ -329,3 +512,6 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('=== DOM LOADED ===');
     startApplication();
 });
+
+// Export the refresh function so other scripts can use it
+window.refreshBudgetStatus = refreshBudgetStatus;
